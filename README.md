@@ -5,6 +5,12 @@ It exercises cuts across selected glyphs, and then both moves and rotates the re
 
 ![Cutting and shaking a lowercase m.](CutAndShake.png "Cut and Shake")
 
+### Requirements
+
+You need to run Glyphs 1.4.3 or higher, otherwise the cutting will not work. You may need to activate *Glyphs > Preferences > Updates > Show Cutting Edge Versions* and update again.
+
+I tested it on OS X 10.9 only, and I assume it will not work in versions of Mac OS X older than 10.7.
+
 ### Installation
 
 1. Download the complete ZIP file and unpack it, or clone the repository.
