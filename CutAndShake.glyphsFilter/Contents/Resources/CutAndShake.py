@@ -59,7 +59,7 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		except Exception as e:
 			self.logToConsole( "keyEquivalent: %s" % str(e) )
 	
-	def setup(self):
+	def setup( self ):
 		try:
 			super( GlyphsFilterCutAndShake, self ).setup()
 			FontMaster = self.valueForKey_( "fontMaster" )
@@ -118,7 +118,7 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		This method is the one eventually called by either the Custom Parameter or Dialog UI.
 		"""
 		try:
-			self.randomCutLayer( Layer, numberOfCuts )
+			self.randomCutLayer( Layer, int(numberOfCuts) )
 			self.randomMovePaths( Layer, abs(maxMove) )
 			self.randomRotatePaths( Layer, abs(maxRotate) )
 		except Exception as e:
