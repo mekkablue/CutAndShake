@@ -5,8 +5,14 @@ import objc
 from Foundation import *
 from AppKit import *
 import sys, os, re
-import random
-import math
+import random, math
+
+MainBundle = NSBundle.mainBundle()
+path = MainBundle.bundlePath() + "/Contents/Scripts"
+if not path in sys.path:
+	sys.path.append( path )
+
+import GlyphsApp
 
 class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 	goodMeasure = 5.0
@@ -19,25 +25,29 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		"""
 		Do all initializing here.
 		"""
-		NSBundle.loadNibNamed_owner_( "CutAndShakeDialog", self )
-		random.seed()
-		return self
+		try:
+			NSBundle.loadNibNamed_owner_( "CutAndShakeDialog", self )
+			random.seed()
+			return self
+		except Exception as e:
+			self.logToConsole( "init: %s" % str(e) )
+			return self
 	
 	def interfaceVersion( self ):
 		"""
 		Distinguishes the API version the plugin was built for. 
 		Return 1.
 		"""
-		return 1
+		try:
+			return 1
+		except Exception as e:
+			self.logToConsole( "interfaceVersion: %s" % str(e) )
 	
 	def title( self ):
 		"""
 		This is the human-readable name as it appears in the menu.
 		"""
-		try:
-			return "Cut and Shake"
-		except Exception as e:
-			self.logToConsole( "title: %s" % str(e) )
+		return "Cut and Shake"
 	
 	def actionName( self ):
 		"""
@@ -79,38 +89,55 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 	
 	def setDefaultFloatValue( self, userDataKey, defaultValue, FontMaster ):
 		"""Returns either the stored or default value for the given userDataKey."""
-		if userDataKey in FontMaster.userData:
-			return FontMaster.userData[userDataKey].floatValue()
-		else:
+		try:
+			if userDataKey in FontMaster.userData:
+				return FontMaster.userData[userDataKey].floatValue()
+			else:
+				return defaultValue
+		except Exception as e:
+			self.logToConsole( "Returning default value.\nsetDefaultFloatValue: %s" % str(e) )
 			return defaultValue
 			
 	def setDefaultIntegerValue( self, userDataKey, defaultValue, FontMaster ):
 		"""Returns either the stored or default value for the given userDataKey."""
-		if userDataKey in FontMaster.userData:
-			return FontMaster.userData[userDataKey].integerValue()
-		else:
+		try:
+			if userDataKey in FontMaster.userData:
+				return FontMaster.userData[userDataKey].integerValue()
+			else:
+				return defaultValue
+		except Exception as e:
+			self.logToConsole( "Return default value.\nsetDefaultIntegerValue: %s" % str(e) )
 			return defaultValue
 	
 	@objc.IBAction
 	def setNumberOfCutsValue_( self ,sender ):
-		numberOfCuts = sender.floatValue()
-		if numberOfCuts != self.numberOfCuts:
-			self.numberOfCuts = numberOfCuts
-			self.process_( None )
+		try:
+			numberOfCuts = sender.floatValue()
+			if numberOfCuts != self.numberOfCuts:
+				self.numberOfCuts = numberOfCuts
+				self.process_( None )
+		except Exception as e:
+			self.logToConsole( "Could not read dialog value.\nsetNumberOfCutsValue_: %s" % str(e) )
 
 	@objc.IBAction
 	def setMaxMoveValue_( self ,sender ):
-		maxMove = sender.floatValue()
-		if maxMove != self.maxMove:
-			self.maxMove = maxMove
-			self.process_( None )
+		try:
+			maxMove = sender.floatValue()
+			if maxMove != self.maxMove:
+				self.maxMove = maxMove
+				self.process_( None )
+		except Exception as e:
+			self.logToConsole( "Could not read dialog value.\nsetMaxMoveValue_: %s" % str(e) )
 			
 	@objc.IBAction
 	def setMaxRotateValue_( self ,sender ):
-		maxRotate = sender.floatValue()
-		if maxRotate != self.maxRotate:
-			self.maxRotate = maxRotate
-			self.process_( None )
+		try:
+			maxRotate = sender.floatValue()
+			if maxRotate != self.maxRotate:
+				self.maxRotate = maxRotate
+				self.process_( None )
+		except Exception as e:
+			self.logToConsole( "Could not read dialog value.\nsetMaxRotateValue_: %s" % str(e) )
 	
 	def processLayerWithValues( self, Layer, numberOfCuts, maxMove, maxRotate ):
 		"""
