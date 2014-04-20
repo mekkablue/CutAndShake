@@ -87,6 +87,15 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		except Exception as e:
 			self.logToConsole( "setup: %s" % str(e) )
 	
+	def returnCopyString( self ):
+		"""Returns the Custom Parameter as string ready for the pasteboard."""
+		try:
+			clipboardString = '(\n    {\n        Filter = "GlyphsFilterCutAndShake;%i;%.1f;%.1f";\n    }\n)\n' % ( self.numberOfCuts, self.maxMove, self.maxRotate )
+			return clipboardString
+		except Exception as e:
+			self.logToConsole( "returnCopyString: %s" % str(e) )
+			return False
+	
 	def setDefaultFloatValue( self, userDataKey, defaultValue, FontMaster ):
 		"""Returns either the stored or default value for the given userDataKey."""
 		try:
@@ -110,7 +119,18 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 			return defaultValue
 	
 	@objc.IBAction
-	def setNumberOfCutsValue_( self ,sender ):
+	def setClipboard_( self, sender ):
+		"""Sets the contents of the clipboard to myText."""
+		try:
+			myText = self.returnCopyString()
+			myClipboard = NSPasteboard.generalPasteboard()
+			myClipboard.declareTypes_owner_( [NSStringPboardType], None )
+			myClipboard.setString_forType_( myText, NSStringPboardType )
+		except Exception as e:
+			self.logToConsole( "setClipboard: %s" % str(e) )
+	
+	@objc.IBAction
+	def setNumberOfCutsValue_( self, sender ):
 		try:
 			numberOfCuts = sender.floatValue()
 			if numberOfCuts != self.numberOfCuts:
