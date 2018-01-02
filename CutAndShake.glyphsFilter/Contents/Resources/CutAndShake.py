@@ -190,6 +190,29 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		except Exception as e:
 			self.logToConsole( "processFont_withArguments_: %s" % str(e) )
 	
+	def processLayer_withArguments_( self, Layer, Arguments ):
+		"""
+		Invoked when called as Custom Parameter in an instance to render the preview.
+		The Arguments come from the custom parameter in the instance settings. 
+		The first item in Arguments is the class-name. After that, it depends on the filter.
+		"""
+		try:
+			# Set default values for potential arguments (values), just in case:
+			numberOfCuts = 10
+			maxMove = 30.0
+			maxRotate = 20.0
+			
+			# Override defaults with actual values from custom parameter:
+			if len(Arguments) > 1:
+				numberOfCuts = Arguments[1].integerValue()
+				maxMove = Arguments[2].floatValue()
+				maxRotate = Arguments[3].floatValue()
+		
+			self.processLayerWithValues( Layer, numberOfCuts, maxMove, maxRotate )
+		except Exception as e:
+			self.logToConsole( "processFont_withArguments_: %s" % str(e) )
+		
+	
 	def process_( self, sender ):
 		"""
 		This method gets called when the filter is run with the dialog through the Filter menu.
