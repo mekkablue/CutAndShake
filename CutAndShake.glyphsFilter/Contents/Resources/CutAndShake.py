@@ -81,11 +81,10 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		except Exception as e:
 			self.logToConsole( "setup: %s" % str(e) )
 	
-	def returnCopyString( self ):
+	def customParameterString( self ):
 		"""Returns the Custom Parameter as string ready for the pasteboard."""
 		try:
-			clipboardString = '(\n    {\n        Filter = "GlyphsFilterCutAndShake;%i;%.1f;%.1f";\n    }\n)\n' % ( self.numberOfCuts, self.maxMove, self.maxRotate )
-			return clipboardString
+			return "CutAndShake;%i;%.1f;%.1f" % ( self.numberOfCuts, self.maxMove, self.maxRotate )
 		except Exception as e:
 			self.logToConsole( "returnCopyString: %s" % str(e) )
 			return False
