@@ -183,9 +183,9 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 				maxRotate = Arguments[3].floatValue()
 		
 			# With these values, call our code on every glyph:
-			FontMasterId = Font.fontMasterAtIndex_(0).id
+			FontMasterId = Font.masters[0].id
 			for Glyph in Font.glyphs:
-				Layer = Glyph.layerForKey_( FontMasterId )
+				Layer = Glyph.layers[FontMasterId]
 				self.processLayerWithValues( Layer, numberOfCuts, maxMove, maxRotate )
 		except Exception as e:
 			self.logToConsole( "processFont_withArguments_: %s" % str(e) )
