@@ -19,7 +19,7 @@ It exercises cuts across selected glyphs, and then both moves and rotates the re
 Alternatively, you can also use it as a custom parameter in an instance:
 
 	Property: Filter
-	Value: GlyphsFilterCutAndShake;<Number of cuts>;<maximum move in units>;<maximum rotation in degrees>;
+	Value: CutAndShake;<Number of cuts>;<maximum move in units>;<maximum rotation in degrees>;
 
 If you do not feel like typing it, you can click the *Copy Parameter* button, which puts the custom parameter with the current dialog settings in the clipboard. You can then paste it into an instance parameter field.
 
