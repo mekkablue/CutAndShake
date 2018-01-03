@@ -2,17 +2,11 @@
 # encoding: utf-8
 
 import objc
-from Foundation import *
-from AppKit import *
+import GlyphsApp
+from GlyphsApp.plugins import *
 import sys, os, re
 import random, math
 
-MainBundle = NSBundle.mainBundle()
-path = MainBundle.bundlePath() + "/Contents/Scripts"
-if not path in sys.path:
-	sys.path.append( path )
-
-import GlyphsApp
 
 class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 	goodMeasure = 5.0
@@ -87,11 +81,10 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 		except Exception as e:
 			self.logToConsole( "setup: %s" % str(e) )
 	
-	def returnCopyString( self ):
+	def customParameterString( self ):
 		"""Returns the Custom Parameter as string ready for the pasteboard."""
 		try:
-			clipboardString = '(\n    {\n        Filter = "GlyphsFilterCutAndShake;%i;%.1f;%.1f";\n    }\n)\n' % ( self.numberOfCuts, self.maxMove, self.maxRotate )
-			return clipboardString
+			return "CutAndShake;%i;%.1f;%.1f" % ( self.numberOfCuts, self.maxMove, self.maxRotate )
 		except Exception as e:
 			self.logToConsole( "returnCopyString: %s" % str(e) )
 			return False
@@ -190,12 +183,35 @@ class GlyphsFilterCutAndShake ( GSFilterPlugin ):
 				maxRotate = Arguments[3].floatValue()
 		
 			# With these values, call our code on every glyph:
-			FontMasterId = Font.fontMasterAtIndex_(0).id
+			FontMasterId = Font.masters[0].id
 			for Glyph in Font.glyphs:
-				Layer = Glyph.layerForKey_( FontMasterId )
+				Layer = Glyph.layers[FontMasterId]
 				self.processLayerWithValues( Layer, numberOfCuts, maxMove, maxRotate )
 		except Exception as e:
 			self.logToConsole( "processFont_withArguments_: %s" % str(e) )
+	
+	def processLayer_withArguments_( self, Layer, Arguments ):
+		"""
+		Invoked when called as Custom Parameter in an instance to render the preview.
+		The Arguments come from the custom parameter in the instance settings. 
+		The first item in Arguments is the class-name. After that, it depends on the filter.
+		"""
+		try:
+			# Set default values for potential arguments (values), just in case:
+			numberOfCuts = 10
+			maxMove = 30.0
+			maxRotate = 20.0
+			
+			# Override defaults with actual values from custom parameter:
+			if len(Arguments) > 1:
+				numberOfCuts = Arguments[1].integerValue()
+				maxMove = Arguments[2].floatValue()
+				maxRotate = Arguments[3].floatValue()
+		
+			self.processLayerWithValues( Layer, numberOfCuts, maxMove, maxRotate )
+		except Exception as e:
+			self.logToConsole( "processFont_withArguments_: %s" % str(e) )
+		
 	
 	def process_( self, sender ):
 		"""
