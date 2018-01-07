@@ -19,18 +19,18 @@ It exercises cuts across selected glyphs, and then both moves and rotates the re
 Alternatively, you can also use it as a custom parameter in an instance:
 
 	Property: Filter
-	Value: CutAndShake;<Number of cuts>;<maximum move in units>;<maximum rotation in degrees>;
+	Value: CutAndShake; cuts:<Number of cuts>; move:<maximum move in units>; rotate:<maximum rotation in degrees>;
 
 If you do not feel like typing it, you can click the *Copy Parameter* button, which puts the custom parameter with the current dialog settings in the clipboard. You can then paste it into an instance parameter field.
 
 ### Requirements
 
-The plugin needs Glyphs 1.4.3 or higher, running on OS X 10.7 or later. I can only test it in current OS versions, and I assume it will not work in versions of Mac OS X older than 10.7.
+The plugin needs Glyphs 2.3 or higher. I assume it will not work in earlier versions.
 
 ### License
 
-Copyright 2014 Rainer Erich Scheichelbauer (@mekkablue).
-Based on sample code by Georg Seifert (@schriftgestalt).
+Copyright 2014-2018 Rainer Erich Scheichelbauer (@mekkablue).
+Based on sample code by Georg Seifert (@schriftgestalt) and Jan Gerner (@yanone).
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

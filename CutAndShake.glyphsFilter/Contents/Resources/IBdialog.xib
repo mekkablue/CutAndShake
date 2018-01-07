@@ -5,85 +5,85 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="GlyphsFilterCutAndShake">
+        <customObject id="-2" userLabel="File's Owner" customClass="CutAndShake">
             <connections>
-                <outlet property="_maxMoveField" destination="LUZ-fK-Ku4" id="jk2-Sy-HJa"/>
-                <outlet property="_maxRotateField" destination="dmE-nM-a9a" id="fiO-s7-dvN"/>
-                <outlet property="_numberOfCutsField" destination="vfg-c5-0Yw" id="GLU-k4-mDD"/>
-                <outlet property="_view" destination="1" id="sc4-cV-ZFh"/>
+                <outlet property="dialog" destination="1" id="kzC-yw-bol"/>
+                <outlet property="maxMoveField" destination="Fok-Pk-8PT" id="gzL-KL-RXR"/>
+                <outlet property="maxRotateField" destination="2lz-M5-KG3" id="pJh-ZX-wMd"/>
+                <outlet property="numberOfCutsField" destination="LgY-RQ-0BT" id="4T5-7l-Ukp"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="1">
-            <rect key="frame" x="0.0" y="0.0" width="220" height="107"/>
+            <rect key="frame" x="0.0" y="0.0" width="211" height="118"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="O8f-Or-SWt">
-                    <rect key="frame" x="18" y="70" width="49" height="17"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="StI-Lb-Opc">
+                    <rect key="frame" x="18" y="78" width="49" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cuts" id="dPX-2j-6DZ">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Cuts" id="1Fj-Jg-x9I">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField toolTip="Number of times the glyph is cut." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vfg-c5-0Yw" customClass="GSSteppingTextField">
-                    <rect key="frame" x="87" y="68" width="113" height="22"/>
+                <textField toolTip="Number of times the glyph is cut." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LgY-RQ-0BT" customClass="GSSteppingTextField">
+                    <rect key="frame" x="87" y="76" width="104" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" id="19c-la-cXO">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" id="1wz-BE-J2q">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="setNumberOfCutsValue:" target="-2" id="yPL-lv-YlX"/>
+                        <action selector="setNumberOfCuts:" target="-2" id="CMe-qV-EiM"/>
                     </connections>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SfV-XV-Js4">
-                    <rect key="frame" x="18" y="42" width="49" height="17"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="G7K-1d-H1X">
+                    <rect key="frame" x="18" y="50" width="49" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Move" id="6vb-Xh-oav">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Move" id="Wzc-da-eWU">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField toolTip="The maximum distance each part can be moved randomly." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LUZ-fK-Ku4" customClass="GSSteppingTextField">
-                    <rect key="frame" x="87" y="40" width="113" height="22"/>
+                <textField toolTip="The maximum distance each part can be moved randomly." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Fok-Pk-8PT" customClass="GSSteppingTextField">
+                    <rect key="frame" x="87" y="48" width="104" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" id="bwu-g3-Uqr">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" id="siQ-md-C7G">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="setMaxMoveValue:" target="-2" id="7Bh-RX-kyG"/>
+                        <action selector="setMaxMove:" target="-2" id="PiU-X0-jnz"/>
                     </connections>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="411-ch-exx">
-                    <rect key="frame" x="18" y="14" width="49" height="17"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mwW-Ra-LEh">
+                    <rect key="frame" x="18" y="22" width="49" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rotate" id="jJ4-k0-T8b">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Rotate" id="wfk-xN-uOd">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField toolTip="The maximum angle by which each part can be randomly rotated." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dmE-nM-a9a" customClass="GSSteppingTextField">
-                    <rect key="frame" x="87" y="12" width="113" height="22"/>
+                <textField toolTip="The maximum angle by which each part can be randomly rotated." verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2lz-M5-KG3" customClass="GSSteppingTextField">
+                    <rect key="frame" x="87" y="20" width="104" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="dQQ-f7-mFK">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="WVm-Dg-Lj1">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                     <connections>
-                        <action selector="setMaxRotateValue:" target="-2" id="2JT-jR-hlU"/>
+                        <action selector="setMaxRotate:" target="-2" id="6nJ-YF-GEA"/>
                     </connections>
                 </textField>
             </subviews>
-            <point key="canvasLocation" x="139" y="152.5"/>
+            <point key="canvasLocation" x="139.5" y="199"/>
         </customView>
     </objects>
 </document>
