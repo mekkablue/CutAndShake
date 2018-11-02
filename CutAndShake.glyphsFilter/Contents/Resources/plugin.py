@@ -31,7 +31,8 @@ class CutAndShake(FilterWithDialog):
 	def settings(self):
 		self.menuName = Glyphs.localize({
 			'en': u'Cut and Shake',
-			'de': u'Schneiden und Schütteln',
+			'de': u'Schneiden und schütteln',
+			'fr': u'Couper et secouer',
 		})
 		
 		# Load dialog from .nib (without .extension)
