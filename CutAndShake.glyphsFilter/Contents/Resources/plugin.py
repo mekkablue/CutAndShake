@@ -33,6 +33,14 @@ class CutAndShake(FilterWithDialog):
 			'en': u'Cut and Shake',
 			'de': u'Schneiden und schütteln',
 			'fr': u'Couper et secouer',
+			'es': u'Cortar y agitar',
+		})
+
+		self.actionButtonLabel = Glyphs.localize({
+			'en': u'Apply',
+			'de': u'Anwenden',
+			'fr': u'Appliquer',
+			'es': u'Aplicar',
 		})
 		
 		# Load dialog from .nib (without .extension)

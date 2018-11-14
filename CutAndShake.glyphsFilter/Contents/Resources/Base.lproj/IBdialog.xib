@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="CutAndShake">
+            <connections>
+                <outlet property="dialog" destination="1" id="kzC-yw-bol"/>
+                <outlet property="maxMoveField" destination="Fok-Pk-8PT" id="gzL-KL-RXR"/>
+                <outlet property="maxRotateField" destination="2lz-M5-KG3" id="pJh-ZX-wMd"/>
+                <outlet property="numberOfCutsField" destination="LgY-RQ-0BT" id="4T5-7l-Ukp"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="1">
+            <rect key="frame" x="0.0" y="0.0" width="239" height="126"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="StI-Lb-Opc">
+                    <rect key="frame" x="18" y="87" width="44" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Cuts" id="1Fj-Jg-x9I">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField toolTip="Number of times the glyph is cut." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LgY-RQ-0BT" customClass="GSSteppingTextField">
+                    <rect key="frame" x="68" y="84" width="151" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" id="1wz-BE-J2q">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="setNumberOfCuts:" target="-2" id="CMe-qV-EiM"/>
+                    </connections>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="G7K-1d-H1X">
+                    <rect key="frame" x="18" y="55" width="44" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Move" id="Wzc-da-eWU">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField toolTip="The maximum distance each part can be moved randomly." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Fok-Pk-8PT" customClass="GSSteppingTextField">
+                    <rect key="frame" x="68" y="52" width="151" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="" drawsBackground="YES" id="siQ-md-C7G">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="setMaxMove:" target="-2" id="PiU-X0-jnz"/>
+                    </connections>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mwW-Ra-LEh">
+                    <rect key="frame" x="18" y="23" width="44" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Rotate" id="wfk-xN-uOd">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField toolTip="The maximum angle by which each part can be randomly rotated." verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2lz-M5-KG3" customClass="GSSteppingTextField">
+                    <rect key="frame" x="68" y="20" width="151" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="WVm-Dg-Lj1">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="setMaxRotate:" target="-2" id="6nJ-YF-GEA"/>
+                    </connections>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Fok-Pk-8PT" firstAttribute="top" secondItem="LgY-RQ-0BT" secondAttribute="bottom" constant="10" symbolic="YES" id="2S2-1d-gBM"/>
+                <constraint firstItem="mwW-Ra-LEh" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="3a5-O2-uBR"/>
+                <constraint firstItem="StI-Lb-Opc" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="4rm-ht-p0y"/>
+                <constraint firstItem="G7K-1d-H1X" firstAttribute="leading" secondItem="1" secondAttribute="leading" constant="20" symbolic="YES" id="59s-N2-bSi"/>
+                <constraint firstItem="LgY-RQ-0BT" firstAttribute="top" secondItem="1" secondAttribute="top" constant="20" symbolic="YES" id="PRs-EJ-sMf"/>
+                <constraint firstAttribute="bottom" secondItem="2lz-M5-KG3" secondAttribute="bottom" constant="20" symbolic="YES" id="SGJ-Gj-1Ou"/>
+                <constraint firstItem="LgY-RQ-0BT" firstAttribute="leading" secondItem="StI-Lb-Opc" secondAttribute="trailing" constant="8" symbolic="YES" id="Tkt-z4-3TR"/>
+                <constraint firstAttribute="trailing" secondItem="Fok-Pk-8PT" secondAttribute="trailing" constant="20" symbolic="YES" id="bhn-5d-THa"/>
+                <constraint firstItem="Fok-Pk-8PT" firstAttribute="firstBaseline" secondItem="G7K-1d-H1X" secondAttribute="firstBaseline" id="lfn-eR-urF"/>
+                <constraint firstItem="2lz-M5-KG3" firstAttribute="firstBaseline" secondItem="mwW-Ra-LEh" secondAttribute="firstBaseline" id="mRD-sl-5WI"/>
+                <constraint firstItem="G7K-1d-H1X" firstAttribute="trailing" secondItem="StI-Lb-Opc" secondAttribute="trailing" id="nIR-ci-C2f"/>
+                <constraint firstItem="LgY-RQ-0BT" firstAttribute="firstBaseline" secondItem="StI-Lb-Opc" secondAttribute="firstBaseline" id="qaz-RA-tBn"/>
+                <constraint firstItem="Fok-Pk-8PT" firstAttribute="leading" secondItem="G7K-1d-H1X" secondAttribute="trailing" constant="8" symbolic="YES" id="qnU-gy-Zi8"/>
+                <constraint firstAttribute="trailing" secondItem="2lz-M5-KG3" secondAttribute="trailing" constant="20" symbolic="YES" id="sKP-II-qKq"/>
+                <constraint firstItem="mwW-Ra-LEh" firstAttribute="trailing" secondItem="StI-Lb-Opc" secondAttribute="trailing" id="udh-tl-gJ8"/>
+                <constraint firstItem="2lz-M5-KG3" firstAttribute="leading" secondItem="mwW-Ra-LEh" secondAttribute="trailing" constant="8" symbolic="YES" id="vDA-5n-Uaw"/>
+                <constraint firstAttribute="trailing" secondItem="LgY-RQ-0BT" secondAttribute="trailing" constant="20" symbolic="YES" id="zCA-HX-WmG"/>
+                <constraint firstItem="2lz-M5-KG3" firstAttribute="top" secondItem="Fok-Pk-8PT" secondAttribute="bottom" constant="10" symbolic="YES" id="zMK-6q-DeV"/>
+            </constraints>
+            <point key="canvasLocation" x="153.5" y="199"/>
+        </customView>
+    </objects>
+</document>
