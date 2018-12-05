@@ -1,7 +1,7 @@
 # CutAndShake.glyphsFilter
 
 This is a plugin for the [Glyphs font editor](http://glyphsapp.com/) by Georg Seifert.
-It exercises cuts across selected glyphs, and then both moves and rotates the resulting parts by random amounts, for which the user can specify maximums. After installation, it will add the menu item *Filter > Cut and Shake*. You can set a keyboard shortcut in System Preferences.
+It exercises cuts across selected glyphs, and then both moves and rotates the resulting parts by random amounts, for which the user can specify maximums. After installation, it will add the menu item *Filter > Cut and Shake* (de: *Schneiden und schütteln,* fr: *Couper et secouer,* es: *Cortar y agitar,* zh: 碎片化). You can set a keyboard shortcut in System Preferences.
 
 ![Cutting and shaking a lowercase m.](CutAndShake.png "Cut and Shake")
 
