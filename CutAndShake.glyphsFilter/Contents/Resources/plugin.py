@@ -34,7 +34,7 @@ class CutAndShake(FilterWithDialog):
 			'de': u'Schneiden und schütteln',
 			'fr': u'Couper et secouer',
 			'es': u'Cortar y agitar',
-			'zh': u'碎片化',
+			'zh': u'🤺碎片化',
 		})
 
 		self.actionButtonLabel = Glyphs.localize({
