@@ -1,4 +1,5 @@
 # encoding: utf-8
+from __future__ import division, print_function, unicode_literals
 
 ###########################################################################################################
 #
@@ -15,9 +16,9 @@
 ###########################################################################################################
 
 import objc
-from random import random, randint
 from GlyphsApp import *
 from GlyphsApp.plugins import *
+from random import random, randint
 
 class CutAndShake(FilterWithDialog):
 	goodMeasure = 5.0
@@ -28,6 +29,7 @@ class CutAndShake(FilterWithDialog):
 	maxMoveField = objc.IBOutlet()
 	maxRotateField = objc.IBOutlet()
 	
+	@objc.python_method
 	def settings(self):
 		self.menuName = Glyphs.localize({
 			'en': u'Cut and Shake',
@@ -49,6 +51,7 @@ class CutAndShake(FilterWithDialog):
 		self.loadNib('IBdialog', __file__)
 	
 	# On dialog show
+	@objc.python_method
 	def start(self):
 		
 		# Default settings
@@ -83,6 +86,7 @@ class CutAndShake(FilterWithDialog):
 		self.update()
 	
 	# Actual filter
+	@objc.python_method
 	def filter(self, layer, inEditView, customParameters):
 		# Called through UI, use stored value
 		numberOfCuts = int(Glyphs.defaults['com.mekkablue.CutAndShake.numberOfCuts'])
@@ -90,11 +94,11 @@ class CutAndShake(FilterWithDialog):
 		maxRotate = float(Glyphs.defaults['com.mekkablue.CutAndShake.maxRotate'])
 		
 		# Called on font export, overwrite with values from customParameters:
-		if customParameters.has_key('cuts'):
+		if 'cuts' in customParameters:
 			numberOfCuts = int(customParameters['cuts'])
-		if customParameters.has_key('move'):
+		if 'move' in customParameters:
 			maxMove = abs(customParameters['move'])
-		if customParameters.has_key('rotate'):
+		if 'rotate' in customParameters:
 			maxRotate = abs(customParameters['rotate'])
 		
 		# process the layer:
@@ -102,6 +106,7 @@ class CutAndShake(FilterWithDialog):
 		self.randomMovePaths( layer, maxMove )
 		self.randomRotatePaths( layer, maxRotate )
 	
+	@objc.python_method
 	def generateCustomParameter( self ):
 		return "%s; cuts:%s; move:%s; rotate:%s" % (
 			self.__class__.__name__,
@@ -110,10 +115,7 @@ class CutAndShake(FilterWithDialog):
 			Glyphs.defaults['com.mekkablue.CutAndShake.maxRotate'],
 		)
 	
-	def __file__(self):
-		"""Please leave this method unchanged"""
-		return __file__
-
+	@objc.python_method
 	def randomCutLayer( self, thisLayer, numberOfCuts ):
 		lowestY = thisLayer.bounds.origin.y - self.goodMeasure
 		highestY = thisLayer.bounds.origin.y + thisLayer.bounds.size.height + self.goodMeasure
@@ -129,6 +131,7 @@ class CutAndShake(FilterWithDialog):
 				point2 = NSPoint( self.somewhereBetween( leftmostX, rightmostX ), highestY )
 			thisLayer.cutBetweenPoints( point1, point2 )
 
+	@objc.python_method
 	def randomMovePaths( self, thisLayer, maximumMove ):
 		for thisPath in thisLayer.paths:
 			xMove = self.somewhereBetween( -maximumMove/(2**0.5), maximumMove/(2**0.5) )
@@ -136,12 +139,14 @@ class CutAndShake(FilterWithDialog):
 			shift = NSAffineTransform.transform()
 			shift.translateXBy_yBy_( xMove, yMove )
 			thisPath.applyTransform( shift.transformStruct() )
-		
+	
+	@objc.python_method
 	def somewhereBetween( self, minimum, maximum ):
 		minMaxRange = maximum - minimum
 		randomFloat = minimum + random() * minMaxRange
 		return randomFloat
 
+	@objc.python_method
 	def randomRotatePaths( self, thisLayer, maximumRotate ):
 		for thisPath in thisLayer.paths:
 			centerX = thisPath.bounds.origin.x + thisPath.bounds.size.width / 2.0
@@ -152,4 +157,9 @@ class CutAndShake(FilterWithDialog):
 			rotation.rotateByDegrees_( degrees )
 			rotation.translateXBy_yBy_( -centerX, -centerY )
 			thisPath.applyTransform( rotation.transformStruct() )
-			
+
+	@objc.python_method
+	def __file__(self):
+		"""Please leave this method unchanged"""
+		return __file__
+
