@@ -89,17 +89,17 @@ class CutAndShake(FilterWithDialog):
 	@objc.python_method
 	def filter(self, layer, inEditView, customParameters):
 		# Called through UI, use stored value
-		numberOfCuts = int(Glyphs.defaults['com.mekkablue.CutAndShake.numberOfCuts'])
-		maxMove = float(Glyphs.defaults['com.mekkablue.CutAndShake.maxMove'])
-		maxRotate = float(Glyphs.defaults['com.mekkablue.CutAndShake.maxRotate'])
+		numberOfCuts = int(Glyphs.defaults['com.mekkablue.CutAndShake.numberOfCuts'] or 2)
+		maxMove = float(Glyphs.defaults['com.mekkablue.CutAndShake.maxMove'] or 10)
+		maxRotate = float(Glyphs.defaults['com.mekkablue.CutAndShake.maxRotate'] or 5)
 		
 		# Called on font export, overwrite with values from customParameters:
 		if 'cuts' in customParameters:
-			numberOfCuts = int(customParameters['cuts'])
+			numberOfCuts = int(customParameters['cuts'] or 2)
 		if 'move' in customParameters:
-			maxMove = abs(customParameters['move'])
+			maxMove = abs(customParameters['move'] or 10)
 		if 'rotate' in customParameters:
-			maxRotate = abs(customParameters['rotate'])
+			maxRotate = abs(customParameters['rotate'] or 5)
 		
 		# process the layer:
 		self.randomCutLayer( layer, numberOfCuts )
