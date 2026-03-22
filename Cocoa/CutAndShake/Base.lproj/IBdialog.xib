@@ -12,7 +12,7 @@
         -->
         <customObject id="-2" userLabel="File's Owner" customClass="CutAndShake">
             <connections>
-                <outlet property="view"              destination="RootView"         id="outlet-view"/>
+                <outlet property="_view"             destination="RootView"         id="outlet-view"/>
                 <outlet property="numberOfCutsField" destination="CutsField"        id="outlet-cuts"/>
                 <outlet property="maxMoveField"      destination="MoveField"        id="outlet-move"/>
                 <outlet property="maxRotateField"    destination="RotateField"      id="outlet-rotate"/>

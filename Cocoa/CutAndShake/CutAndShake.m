@@ -15,6 +15,7 @@
 #import <GlyphsCore/GSGlyph.h>
 #import <GlyphsCore/GSLayer.h>
 #import <GlyphsCore/GSPath.h>
+#import <GlyphsCore/GSNode.h>
 #import <GlyphsCore/GSCallbackHandler.h>
 
 // NSUserDefaults keys
@@ -110,21 +111,69 @@ static const CGFloat kGoodMeasure = 5.0;
 	[[NSUserDefaults standardUserDefaults]
 		setInteger:[(NSTextField *)sender intValue]
 		forKey:kNumberOfCuts];
-	[self process];
+	[self process:nil];
 }
 
 - (IBAction)setMaxMove:(id)sender {
 	[[NSUserDefaults standardUserDefaults]
 		setFloat:[(NSTextField *)sender floatValue]
 		forKey:kMaxMove];
-	[self process];
+	[self process:nil];
 }
 
 - (IBAction)setMaxRotate:(id)sender {
 	[[NSUserDefaults standardUserDefaults]
 		setFloat:[(NSTextField *)sender floatValue]
 		forKey:kMaxRotate];
-	[self process];
+	[self process:nil];
+}
+
+#pragma mark - process: (interactive / live preview)
+
+/**
+ Called each time the user changes a parameter in the dialog.
+ Restores each working layer from the corresponding shadow layer
+ (the frozen copy Glyphs made before the filter was first applied),
+ then runs the filter, then hands control back to Glyphs via
+ [super process:nil].
+ */
+- (void)process:(id)sender {
+	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+	NSInteger numberOfCuts = [ud integerForKey:kNumberOfCuts];
+	CGFloat   maxMove      = [ud floatForKey:kMaxMove];
+	CGFloat   maxRotate    = [ud floatForKey:kMaxRotate];
+
+	for (NSUInteger k = 0; k < _shadowLayers.count; k++) {
+		GSLayer *shadowLayer = _shadowLayers[k];
+		GSLayer *layer       = _layers[k];
+
+		// Restore to the pre-filter state from the shadow copy.
+		layer.shapes    = [[NSMutableArray alloc] initWithArray:shadowLayer.shapes copyItems:YES];
+		layer.selection = [NSMutableOrderedSet new];
+
+		// Restore selection on individual nodes when the user works
+		// in the Edit view with a sub-selection.
+		if (shadowLayer.selection.count > 0 && _checkSelection) {
+			for (NSUInteger i = 0; i < shadowLayer.shapes.count; i++) {
+				GSPath *shadowPath = (GSPath *)[shadowLayer objectInShapesAtIndex:i];
+				if (![shadowPath isKindOfClass:[GSPath class]]) continue;
+				GSPath *layerPath = (GSPath *)[layer objectInShapesAtIndex:i];
+				for (NSUInteger j = 0; j < shadowPath.nodes.count; j++) {
+					GSNode *shadowNode = [shadowPath nodeAtIndex:j];
+					if ([shadowLayer.selection containsObject:shadowNode]) {
+						[layer addSelection:[layerPath nodeAtIndex:j]];
+					}
+				}
+			}
+		}
+
+		[self applyFilterToLayer:layer
+		           numberOfCuts:numberOfCuts
+		                maxMove:maxMove
+		              maxRotate:maxRotate];
+		[layer clearSelection];
+	}
+	[super process:nil];
 }
 
 #pragma mark - Custom parameter string
