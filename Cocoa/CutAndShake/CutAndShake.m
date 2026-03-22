@@ -17,6 +17,13 @@
 #import <GlyphsCore/GSPath.h>
 #import <GlyphsCore/GSNode.h>
 #import <GlyphsCore/GSCallbackHandler.h>
+#import <GlyphsCore/GSProxyShapes.h>
+#import <objc/message.h>
+
+// Declare the selector used via objc_msgSend to suppress -Wundeclared-selector
+@interface NSObject (GlyphsToolOtherCutPaths)
++ (void)cutPathsInLayer:(id)layer forPoint:(NSPoint)p1 endPoint:(NSPoint)p2;
+@end
 
 // NSUserDefaults keys
 static NSString *const kNumberOfCuts = @"com.mekkablue.CutAndShake.numberOfCuts";
@@ -102,6 +109,12 @@ static const CGFloat kGoodMeasure = 5.0;
 	_maxRotateField.floatValue    = [ud floatForKey:kMaxRotate];
 
 	[_numberOfCutsField becomeFirstResponder];
+
+	// Trigger an initial preview once the dialog is on screen.
+	// Dispatching asynchronously ensures the edit view is ready to redraw.
+	dispatch_async(dispatch_get_main_queue(), ^{
+		[self process:nil];
+	});
 	return nil;
 }
 
@@ -178,7 +191,7 @@ static const CGFloat kGoodMeasure = 5.0;
 
 #pragma mark - Custom parameter string
 
-- (NSString *)generateCustomParameter {
+- (NSString *)customParameterString {
 	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 	return [NSString stringWithFormat:@"%@; cuts:%ld; move:%.1f; rotate:%.1f",
 		NSStringFromClass([self class]),
@@ -273,7 +286,10 @@ static const CGFloat kGoodMeasure = 5.0;
 			p1 = NSMakePoint(x, lowestY);
 			p2 = NSMakePoint(x, highestY);
 		}
-		[GlyphsToolOther cutPathsInLayer:layer forPoint:p1 endPoint:p2];
+		((void (*)(id, SEL, id, NSPoint, NSPoint))objc_msgSend)(
+			(id)GlyphsToolOther,
+			@selector(cutPathsInLayer:forPoint:endPoint:),
+			layer, p1, p2);
 	}
 }
 

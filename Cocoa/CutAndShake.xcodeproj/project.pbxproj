@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AA000000000000000000010 /* CutAndShake.m in Sources */       = {isa = PBXBuildFile; fileRef = AA00000000000000000000D /* CutAndShake.m */; };
-		AA000000000000000000011 /* IBdialog.xib in Resources */       = {isa = PBXBuildFile; fileRef = AA00000000000000000000F /* IBdialog.xib */; };
-		AA000000000000000000030 /* en IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000031 /* en/IBdialog.strings */; };
-		AA000000000000000000032 /* de IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000033 /* de/IBdialog.strings */; };
-		AA000000000000000000034 /* fr IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000035 /* fr/IBdialog.strings */; };
-		AA000000000000000000036 /* es IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000037 /* es/IBdialog.strings */; };
-		AA000000000000000000038 /* zh_CN IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000039 /* zh_CN/IBdialog.strings */; };
+		AA000000000000000000010 /* CutAndShake.m in Sources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000D /* CutAndShake.m */; };
+		AA000000000000000000011 /* IBdialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA00000000000000000000F /* IBdialog.xib */; };
+		AA000000000000000000030 /* IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000031 /* IBdialog.strings */; };
+		AA000000000000000000032 /* IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000033 /* IBdialog.strings */; };
+		AA000000000000000000034 /* IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000035 /* IBdialog.strings */; };
+		AA000000000000000000036 /* IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000037 /* IBdialog.strings */; };
+		AA000000000000000000038 /* IBdialog.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA000000000000000000039 /* IBdialog.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AA00000000000000000000C /* CutAndShake.h */    = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h;    path = CutAndShake.h;    sourceTree = "<group>"; };
-		AA00000000000000000000D /* CutAndShake.m */    = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CutAndShake.m;    sourceTree = "<group>"; };
-		AA00000000000000000000E /* Info.plist */        = {isa = PBXFileReference; lastKnownFileType = text.plist.xml;    path = Info.plist;        sourceTree = "<group>"; };
-		AA00000000000000000000F /* IBdialog.xib */      = {isa = PBXFileReference; lastKnownFileType = file.xib;          path = IBdialog.xib;      sourceTree = "<group>"; };
+		AA00000000000000000000C /* CutAndShake.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CutAndShake.h; sourceTree = "<group>"; };
+		AA00000000000000000000D /* CutAndShake.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CutAndShake.m; sourceTree = "<group>"; };
+		AA00000000000000000000E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA00000000000000000000F /* IBdialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = IBdialog.xib; sourceTree = "<group>"; };
 		AA000000000000000000015 /* CutAndShake.glyphsFilter */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CutAndShake.glyphsFilter; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA000000000000000000031 /* en/IBdialog.strings */    = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "IBdialog.strings"; path = "en.lproj/IBdialog.strings";    sourceTree = "<group>"; };
-		AA000000000000000000033 /* de/IBdialog.strings */    = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "IBdialog.strings"; path = "de.lproj/IBdialog.strings";    sourceTree = "<group>"; };
-		AA000000000000000000035 /* fr/IBdialog.strings */    = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "IBdialog.strings"; path = "fr.lproj/IBdialog.strings";    sourceTree = "<group>"; };
-		AA000000000000000000037 /* es/IBdialog.strings */    = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "IBdialog.strings"; path = "es.lproj/IBdialog.strings";    sourceTree = "<group>"; };
-		AA000000000000000000039 /* zh_CN/IBdialog.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "IBdialog.strings"; path = "zh_CN.lproj/IBdialog.strings"; sourceTree = "<group>"; };
+		AA000000000000000000031 /* IBdialog.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = IBdialog.strings; path = en.lproj/IBdialog.strings; sourceTree = "<group>"; };
+		AA000000000000000000033 /* IBdialog.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = IBdialog.strings; path = de.lproj/IBdialog.strings; sourceTree = "<group>"; };
+		AA000000000000000000035 /* IBdialog.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = IBdialog.strings; path = fr.lproj/IBdialog.strings; sourceTree = "<group>"; };
+		AA000000000000000000037 /* IBdialog.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = IBdialog.strings; path = es.lproj/IBdialog.strings; sourceTree = "<group>"; };
+		AA000000000000000000039 /* IBdialog.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = IBdialog.strings; path = zh_CN.lproj/IBdialog.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,7 +40,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		AA000000000000000000012 /* CutAndShake (root) */ = {
+		AA000000000000000000012 = {
 			isa = PBXGroup;
 			children = (
 				AA000000000000000000013 /* CutAndShake */,
@@ -60,18 +60,6 @@
 			path = CutAndShake;
 			sourceTree = "<group>";
 		};
-		AA000000000000000000040 /* Localizations */ = {
-			isa = PBXGroup;
-			children = (
-				AA000000000000000000031 /* en/IBdialog.strings */,
-				AA000000000000000000033 /* de/IBdialog.strings */,
-				AA000000000000000000035 /* fr/IBdialog.strings */,
-				AA000000000000000000037 /* es/IBdialog.strings */,
-				AA000000000000000000039 /* zh_CN/IBdialog.strings */,
-			);
-			name = Localizations;
-			sourceTree = "<group>";
-		};
 		AA000000000000000000014 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,8 +73,19 @@
 			children = (
 				AA00000000000000000000F /* IBdialog.xib */,
 			);
-			name = "Base.lproj";
-			path = "Base.lproj";
+			path = Base.lproj;
+			sourceTree = "<group>";
+		};
+		AA000000000000000000040 /* Localizations */ = {
+			isa = PBXGroup;
+			children = (
+				AA000000000000000000031 /* IBdialog.strings */,
+				AA000000000000000000033 /* IBdialog.strings */,
+				AA000000000000000000035 /* IBdialog.strings */,
+				AA000000000000000000037 /* IBdialog.strings */,
+				AA000000000000000000039 /* IBdialog.strings */,
+			);
+			name = Localizations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -147,11 +146,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA000000000000000000011 /* IBdialog.xib in Resources */,
-				AA000000000000000000030 /* en IBdialog.strings in Resources */,
-				AA000000000000000000032 /* de IBdialog.strings in Resources */,
-				AA000000000000000000034 /* fr IBdialog.strings in Resources */,
-				AA000000000000000000036 /* es IBdialog.strings in Resources */,
-				AA000000000000000000038 /* zh_CN IBdialog.strings in Resources */,
+				AA000000000000000000030 /* IBdialog.strings in Resources */,
+				AA000000000000000000032 /* IBdialog.strings in Resources */,
+				AA000000000000000000034 /* IBdialog.strings in Resources */,
+				AA000000000000000000036 /* IBdialog.strings in Resources */,
+				AA000000000000000000038 /* IBdialog.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,9 +167,8 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-
 /* Begin XCBuildConfiguration section */
-		AA000000000000000000005 /* Debug (Project) */ = {
+		AA000000000000000000005 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -228,7 +226,7 @@
 			};
 			name = Debug;
 		};
-		AA000000000000000000006 /* Release (Project) */ = {
+		AA000000000000000000006 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -279,19 +277,19 @@
 			};
 			name = Release;
 		};
-		AA000000000000000000007 /* Debug (Target) */ = {
+		AA000000000000000000007 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "";
-				GLYPHS_APP_PATH = "/Applications/Glyphs 3.app";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(GLYPHS_APP_PATH)/Contents/Frameworks",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks\"",
 				);
+				GLYPHS_APP_PATH = "/Applications/Glyphs 3.app";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers\"",
 				);
 				INFOPLIST_FILE = CutAndShake/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application Support/Glyphs 3/Plugins";
@@ -301,27 +299,30 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-undefined dynamic_lookup";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mekkablue.CutAndShake";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mekkablue.CutAndShake;
 				PRODUCT_NAME = CutAndShake;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = glyphsFilter;
 			};
 			name = Debug;
 		};
-		AA000000000000000000008 /* Release (Target) */ = {
+		AA000000000000000000008 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "";
-				GLYPHS_APP_PATH = "/Applications/Glyphs 3.app";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(GLYPHS_APP_PATH)/Contents/Frameworks",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks\"",
 				);
+				GLYPHS_APP_PATH = "/Applications/Glyphs 3.app";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers\"",
 				);
 				INFOPLIST_FILE = CutAndShake/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application Support/Glyphs 3/Plugins";
@@ -331,8 +332,11 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-undefined dynamic_lookup";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.mekkablue.CutAndShake";
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mekkablue.CutAndShake;
 				PRODUCT_NAME = CutAndShake;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = glyphsFilter;
@@ -361,7 +365,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = AA000000000000000000001 /* Project object */;
 }
