@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantiationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <!--
+            File's Owner is the CutAndShake plugin instance.
+            Outlets:  dialog (the root view), numberOfCutsField, maxMoveField, maxRotateField.
+            Actions:  setNumberOfCuts:, setMaxMove:, setMaxRotate:.
+        -->
+        <customObject id="-2" userLabel="File's Owner" customClass="CutAndShake">
+            <connections>
+                <outlet property="view"              destination="RootView"         id="outlet-view"/>
+                <outlet property="numberOfCutsField" destination="CutsField"        id="outlet-cuts"/>
+                <outlet property="maxMoveField"      destination="MoveField"        id="outlet-move"/>
+                <outlet property="maxRotateField"    destination="RotateField"      id="outlet-rotate"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+
+        <!-- Root view – same size as the Python version (239 × 126) -->
+        <customView id="RootView">
+            <rect key="frame" x="0.0" y="0.0" width="239" height="126"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+
+                <!-- Row 1: Cuts label + field -->
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750"
+                           translatesAutoresizingMaskIntoConstraints="NO" id="CutsLabel">
+                    <rect key="frame" x="18" y="87" width="44" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping"
+                                   sendsActionOnEndEditing="YES" alignment="right" title="Cuts"
+                                   id="CutsLabelCell">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+
+                <!-- GSSteppingTextField subclass provides arrow-key stepping in Glyphs.
+                     Falls back to plain NSTextField when GlyphsCore is not loaded. -->
+                <textField toolTip="Number of times the glyph is cut."
+                           verticalHuggingPriority="750"
+                           translatesAutoresizingMaskIntoConstraints="NO"
+                           id="CutsField" customClass="GSSteppingTextField">
+                    <rect key="frame" x="68" y="84" width="151" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping"
+                                   selectable="YES" editable="YES" continuous="YES"
+                                   sendsActionOnEndEditing="YES" state="on" borderStyle="bezel"
+                                   placeholderString="" drawsBackground="YES" id="CutsFieldCell">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="setNumberOfCuts:" target="-2" id="action-cuts"/>
+                    </connections>
+                </textField>
+
+                <!-- Row 2: Move label + field -->
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750"
+                           translatesAutoresizingMaskIntoConstraints="NO" id="MoveLabel">
+                    <rect key="frame" x="18" y="55" width="44" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping"
+                                   sendsActionOnEndEditing="YES" alignment="right" title="Move"
+                                   id="MoveLabelCell">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+
+                <textField toolTip="The maximum distance each part can be moved randomly."
+                           verticalHuggingPriority="750"
+                           translatesAutoresizingMaskIntoConstraints="NO"
+                           id="MoveField" customClass="GSSteppingTextField">
+                    <rect key="frame" x="68" y="52" width="151" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping"
+                                   selectable="YES" editable="YES" continuous="YES"
+                                   sendsActionOnEndEditing="YES" state="on" borderStyle="bezel"
+                                   placeholderString="" drawsBackground="YES" id="MoveFieldCell">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="setMaxMove:" target="-2" id="action-move"/>
+                    </connections>
+                </textField>
+
+                <!-- Row 3: Rotate label + field -->
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750"
+                           translatesAutoresizingMaskIntoConstraints="NO" id="RotateLabel">
+                    <rect key="frame" x="18" y="23" width="44" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping"
+                                   sendsActionOnEndEditing="YES" alignment="right" title="Rotate"
+                                   id="RotateLabelCell">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+
+                <textField toolTip="The maximum angle by which each part can be randomly rotated."
+                           verticalHuggingPriority="750"
+                           translatesAutoresizingMaskIntoConstraints="NO"
+                           id="RotateField" customClass="GSSteppingTextField">
+                    <rect key="frame" x="68" y="20" width="151" height="22"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping"
+                                   selectable="YES" editable="YES" continuous="YES"
+                                   sendsActionOnEndEditing="YES" state="on" borderStyle="bezel"
+                                   drawsBackground="YES" id="RotateFieldCell">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <action selector="setMaxRotate:" target="-2" id="action-rotate"/>
+                    </connections>
+                </textField>
+
+            </subviews>
+
+            <!-- Auto Layout constraints matching the Python plugin's layout -->
+            <constraints>
+                <!-- Leading edges of labels -->
+                <constraint firstItem="CutsLabel"   firstAttribute="leading" secondItem="RootView" secondAttribute="leading" constant="20" id="c01"/>
+                <constraint firstItem="MoveLabel"   firstAttribute="leading" secondItem="RootView" secondAttribute="leading" constant="20" id="c02"/>
+                <constraint firstItem="RotateLabel" firstAttribute="leading" secondItem="RootView" secondAttribute="leading" constant="20" id="c03"/>
+                <!-- Trailing alignment of labels -->
+                <constraint firstItem="MoveLabel"   firstAttribute="trailing" secondItem="CutsLabel"   secondAttribute="trailing" id="c04"/>
+                <constraint firstItem="RotateLabel" firstAttribute="trailing" secondItem="CutsLabel"   secondAttribute="trailing" id="c05"/>
+                <!-- Field leading = label trailing + 8 -->
+                <constraint firstItem="CutsField"   firstAttribute="leading" secondItem="CutsLabel"   secondAttribute="trailing" constant="8" id="c06"/>
+                <constraint firstItem="MoveField"   firstAttribute="leading" secondItem="MoveLabel"   secondAttribute="trailing" constant="8" id="c07"/>
+                <constraint firstItem="RotateField" firstAttribute="leading" secondItem="RotateLabel" secondAttribute="trailing" constant="8" id="c08"/>
+                <!-- Field trailing = superview trailing - 20 -->
+                <constraint firstAttribute="trailing" secondItem="CutsField"   secondAttribute="trailing" constant="20" id="c09"/>
+                <constraint firstAttribute="trailing" secondItem="MoveField"   secondAttribute="trailing" constant="20" id="c10"/>
+                <constraint firstAttribute="trailing" secondItem="RotateField" secondAttribute="trailing" constant="20" id="c11"/>
+                <!-- Vertical: top row -->
+                <constraint firstItem="CutsField"   firstAttribute="top"   secondItem="RootView"   secondAttribute="top"    constant="20" id="c12"/>
+                <!-- Baseline alignments: label baseline = field baseline -->
+                <constraint firstItem="CutsField"   firstAttribute="firstBaseline" secondItem="CutsLabel"   secondAttribute="firstBaseline" id="c13"/>
+                <constraint firstItem="MoveField"   firstAttribute="firstBaseline" secondItem="MoveLabel"   secondAttribute="firstBaseline" id="c14"/>
+                <constraint firstItem="RotateField" firstAttribute="firstBaseline" secondItem="RotateLabel" secondAttribute="firstBaseline" id="c15"/>
+                <!-- Row spacing -->
+                <constraint firstItem="MoveField"   firstAttribute="top" secondItem="CutsField"   secondAttribute="bottom" constant="10" id="c16"/>
+                <constraint firstItem="RotateField" firstAttribute="top" secondItem="MoveField"   secondAttribute="bottom" constant="10" id="c17"/>
+                <!-- Bottom -->
+                <constraint firstAttribute="bottom"  secondItem="RotateField" secondAttribute="bottom" constant="20" id="c18"/>
+            </constraints>
+
+            <point key="canvasLocation" x="153.5" y="199"/>
+        </customView>
+    </objects>
+</document>

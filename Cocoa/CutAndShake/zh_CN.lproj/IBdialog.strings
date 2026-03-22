@@ -1,0 +1,4 @@
+/* Simplified Chinese localisation for CutAndShake filter dialog */
+"Cuts"   = "切割次数";
+"Move"   = "位移";
+"Rotate" = "旋转";

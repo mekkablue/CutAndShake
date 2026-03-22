@@ -1,0 +1,4 @@
+/* German localisation for CutAndShake filter dialog */
+"Cuts"   = "Schnitte";
+"Move"   = "Versatz";
+"Rotate" = "Rotation";

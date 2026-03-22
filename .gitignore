@@ -1,2 +1,7 @@
 
 .DS_Store
+Cocoa/LocalConfig.xcconfig
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/

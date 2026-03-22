@@ -1,0 +1,10 @@
+/* Localisation strings for CutAndShake filter dialog (English) */
+
+/* Label: number-of-cuts row */
+"Cuts" = "Cuts";
+
+/* Label: max-move row */
+"Move" = "Move";
+
+/* Label: max-rotate row */
+"Rotate" = "Rotate";

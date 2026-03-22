@@ -1,0 +1,4 @@
+/* Spanish localisation for CutAndShake filter dialog */
+"Cuts"   = "Cortes";
+"Move"   = "Desplazamiento";
+"Rotate" = "Rotación";

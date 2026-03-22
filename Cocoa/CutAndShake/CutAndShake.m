@@ -1,0 +1,270 @@
+//
+//  CutAndShake.m
+//  CutAndShake
+//
+//  Rainer Erich Scheichelbauer | mekkablue
+//  Native Cocoa/ObjC version of the CutAndShake Glyphs filter plugin.
+//
+//  Cuts glyphs with random horizontal/vertical lines, then randomly
+//  moves and rotates the resulting path fragments.
+//
+
+#import "CutAndShake.h"
+#import <GlyphsCore/GSFont.h>
+#import <GlyphsCore/GSFontMaster.h>
+#import <GlyphsCore/GSGlyph.h>
+#import <GlyphsCore/GSLayer.h>
+#import <GlyphsCore/GSPath.h>
+#import <GlyphsCore/GSCallbackHandler.h>
+
+// NSUserDefaults keys
+static NSString *const kNumberOfCuts = @"com.mekkablue.CutAndShake.numberOfCuts";
+static NSString *const kMaxMove      = @"com.mekkablue.CutAndShake.maxMove";
+static NSString *const kMaxRotate    = @"com.mekkablue.CutAndShake.maxRotate";
+
+// Extra margin around the glyph bounds when generating cut lines
+static const CGFloat kGoodMeasure = 5.0;
+
+@implementation CutAndShake
+
+- (instancetype)init {
+	self = [super init];
+	return self;
+}
+
+#pragma mark - GSFilterPlugin required methods
+
+- (NSUInteger)interfaceVersion {
+	// Distinguishes the API version the plugin was built for.
+	return 1;
+}
+
+- (NSString *)title {
+	// Return the localised menu name.
+	// Glyphs picks the best match for the current UI language.
+	NSDictionary *names = @{
+		@"en": @"Cut and Shake",
+		@"de": @"Schneiden und schütteln",
+		@"fr": @"Couper et secouer",
+		@"es": @"Cortar y agitar",
+		@"zh": @"🤺碎片化",
+	};
+	NSString *lang = [[[NSBundle mainBundle] preferredLocalizations] firstObject] ?: @"en";
+	return names[lang] ?: names[@"en"];
+}
+
+- (NSString *)actionName {
+	// The label of the Apply button in the filter dialog.
+	NSDictionary *labels = @{
+		@"en": @"Apply",
+		@"de": @"Anwenden",
+		@"fr": @"Appliquer",
+		@"es": @"Aplicar",
+		@"zh": @"应用",
+	};
+	NSString *lang = [[[NSBundle mainBundle] preferredLocalizations] firstObject] ?: @"en";
+	return labels[lang] ?: labels[@"en"];
+}
+
+- (NSString *)keyEquivalent {
+	// Return nil — no fixed keyboard shortcut (users set their own in System Settings).
+	return nil;
+}
+
+#pragma mark - Dialog / View
+
+- (NSView *)view {
+	if (!_view) {
+		[[NSBundle bundleForClass:[self class]]
+			loadNibNamed:@"IBdialog"
+			owner:self
+			topLevelObjects:nil];
+	}
+	return _view;
+}
+
+- (NSError *)setup {
+	// Called just before the dialog is shown.  Restore saved values and
+	// push them into the text fields.
+	[super setup];
+
+	NSDictionary *defaults = @{
+		kNumberOfCuts: @5,
+		kMaxMove:      @50,
+		kMaxRotate:    @20,
+	};
+	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+
+	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+	_numberOfCutsField.intValue   = (int)[ud integerForKey:kNumberOfCuts];
+	_maxMoveField.floatValue      = [ud floatForKey:kMaxMove];
+	_maxRotateField.floatValue    = [ud floatForKey:kMaxRotate];
+
+	[_numberOfCutsField becomeFirstResponder];
+	return nil;
+}
+
+#pragma mark - IBActions
+
+- (IBAction)setNumberOfCuts:(id)sender {
+	[[NSUserDefaults standardUserDefaults]
+		setInteger:[(NSTextField *)sender intValue]
+		forKey:kNumberOfCuts];
+	[self process];
+}
+
+- (IBAction)setMaxMove:(id)sender {
+	[[NSUserDefaults standardUserDefaults]
+		setFloat:[(NSTextField *)sender floatValue]
+		forKey:kMaxMove];
+	[self process];
+}
+
+- (IBAction)setMaxRotate:(id)sender {
+	[[NSUserDefaults standardUserDefaults]
+		setFloat:[(NSTextField *)sender floatValue]
+		forKey:kMaxRotate];
+	[self process];
+}
+
+#pragma mark - Custom parameter string
+
+- (NSString *)generateCustomParameter {
+	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+	return [NSString stringWithFormat:@"%@; cuts:%ld; move:%.1f; rotate:%.1f",
+		NSStringFromClass([self class]),
+		(long)[ud integerForKey:kNumberOfCuts],
+		[ud floatForKey:kMaxMove],
+		[ud floatForKey:kMaxRotate]];
+}
+
+#pragma mark - Export / batch processing
+
+- (void)processFont:(GSFont *)font withArguments:(NSArray *)arguments {
+	// Called when the filter is invoked as a Custom Parameter at export.
+	// arguments[0] is the class name; the remaining items are key:value pairs.
+
+	NSInteger numberOfCuts = [[NSUserDefaults standardUserDefaults] integerForKey:kNumberOfCuts];
+	CGFloat   maxMove      = [[NSUserDefaults standardUserDefaults] floatForKey:kMaxMove];
+	CGFloat   maxRotate    = [[NSUserDefaults standardUserDefaults] floatForKey:kMaxRotate];
+
+	// Parse key:value arguments supplied via the custom parameter.
+	for (NSUInteger i = 1; i < arguments.count; i++) {
+		NSString *arg = [arguments[i] stringByTrimmingCharactersInSet:
+		                 [NSCharacterSet whitespaceCharacterSet]];
+		NSArray  *kv  = [arg componentsSeparatedByString:@":"];
+		if (kv.count != 2) continue;
+		NSString *key   = [kv[0] stringByTrimmingCharactersInSet:
+		                   [NSCharacterSet whitespaceCharacterSet]];
+		NSString *value = [kv[1] stringByTrimmingCharactersInSet:
+		                   [NSCharacterSet whitespaceCharacterSet]];
+		if ([key isEqualToString:@"cuts"])   numberOfCuts = [value integerValue];
+		if ([key isEqualToString:@"move"])   maxMove      = fabs([value floatValue]);
+		if ([key isEqualToString:@"rotate"]) maxRotate    = fabs([value floatValue]);
+	}
+
+	// Iterate all glyphs and their layers.
+	_checkSelection = NO;
+	for (GSGlyph *glyph in font.glyphs) {
+		for (GSLayer *layer in glyph.layers) {
+			[self applyFilterToLayer:layer
+			           numberOfCuts:(NSInteger)numberOfCuts
+			                maxMove:maxMove
+			              maxRotate:maxRotate];
+		}
+	}
+}
+
+#pragma mark - Core filter logic
+
+/**
+ Apply the full CutAndShake effect to a single @p layer.
+ 1. Make @p numberOfCuts random horizontal or vertical cuts.
+ 2. Shift each resulting path fragment by a random vector ≤ @p maxMove.
+ 3. Rotate each path fragment around its own centre by ≤ @p maxRotate degrees.
+ */
+- (void)applyFilterToLayer:(GSLayer *)layer
+             numberOfCuts:(NSInteger)numberOfCuts
+                  maxMove:(CGFloat)maxMove
+                maxRotate:(CGFloat)maxRotate {
+
+	[self randomCutLayer:layer numberOfCuts:numberOfCuts];
+	[self randomMovePaths:layer    maxMove:maxMove];
+	[self randomRotatePaths:layer  maxRotate:maxRotate];
+}
+
+/**
+ Make @p numberOfCuts random straight cuts through @p layer.
+ Each cut is either horizontal (random Y) or vertical (random X).
+ The cut lines extend @c kGoodMeasure beyond the layer bounds so
+ they cleanly intersect all paths.
+ */
+- (void)randomCutLayer:(GSLayer *)layer numberOfCuts:(NSInteger)numberOfCuts {
+	NSRect b = layer.bounds;
+	CGFloat lowestY    = NSMinY(b) - kGoodMeasure;
+	CGFloat highestY   = NSMaxY(b) + kGoodMeasure;
+	CGFloat leftmostX  = NSMinX(b) - kGoodMeasure;
+	CGFloat rightmostX = NSMaxX(b) + kGoodMeasure;
+
+	for (NSInteger i = 0; i < numberOfCuts; i++) {
+		NSPoint p1, p2;
+		if (arc4random_uniform(2) == 0) {
+			// Horizontal cut at a random Y
+			CGFloat y = [self randomBetween:lowestY and:highestY];
+			p1 = NSMakePoint(leftmostX,  y);
+			p2 = NSMakePoint(rightmostX, y);
+		} else {
+			// Vertical cut at a random X
+			CGFloat x = [self randomBetween:leftmostX and:rightmostX];
+			p1 = NSMakePoint(x, lowestY);
+			p2 = NSMakePoint(x, highestY);
+		}
+		[layer cutBetweenPoints:p1 and:p2];
+	}
+}
+
+/**
+ Translate each path in @p layer by a random vector whose magnitude
+ is at most @p maxMove (distributed uniformly per axis up to maxMove/√2
+ so the maximum distance equals @p maxMove).
+ */
+- (void)randomMovePaths:(GSLayer *)layer maxMove:(CGFloat)maxMove {
+	CGFloat halfRange = maxMove / sqrt(2.0);
+	for (GSPath *path in layer.paths) {
+		CGFloat dx = [self randomBetween:-halfRange and:halfRange];
+		CGFloat dy = [self randomBetween:-halfRange and:halfRange];
+		NSAffineTransform *t = [NSAffineTransform transform];
+		[t translateXBy:dx yBy:dy];
+		[path applyTransform:[t transformStruct]];
+	}
+}
+
+/**
+ Rotate each path in @p layer by a random angle in [−maxRotate, +maxRotate]
+ degrees around the path's own bounding-box centre.
+ */
+- (void)randomRotatePaths:(GSLayer *)layer maxRotate:(CGFloat)maxRotate {
+	for (GSPath *path in layer.paths) {
+		NSRect   b       = path.bounds;
+		CGFloat  cx      = NSMidX(b);
+		CGFloat  cy      = NSMidY(b);
+		CGFloat  degrees = [self randomBetween:-maxRotate and:maxRotate];
+
+		NSAffineTransform *t = [NSAffineTransform transform];
+		[t translateXBy:cx yBy:cy];
+		[t rotateByDegrees:degrees];
+		[t translateXBy:-cx yBy:-cy];
+		[path applyTransform:[t transformStruct]];
+	}
+}
+
+#pragma mark - Helpers
+
+/** Return a uniform random CGFloat in [minimum, maximum]. */
+- (CGFloat)randomBetween:(CGFloat)minimum and:(CGFloat)maximum {
+	CGFloat range  = maximum - minimum;
+	CGFloat random = (CGFloat)arc4random() / (CGFloat)UINT32_MAX;
+	return minimum + random * range;
+}
+
+@end
