@@ -255,6 +255,11 @@ static const CGFloat kGoodMeasure = 5.0;
 	CGFloat leftmostX  = NSMinX(b) - kGoodMeasure;
 	CGFloat rightmostX = NSMaxX(b) + kGoodMeasure;
 
+	// layer.cutBetweenPoints() in the Python API is a wrapper around
+	// +[GlyphsToolOther cutPathsInLayer:forPoint:endPoint:].
+	// We look up the class at runtime so we don't need its header.
+	Class GlyphsToolOther = NSClassFromString(@"GlyphsToolOther");
+
 	for (NSInteger i = 0; i < numberOfCuts; i++) {
 		NSPoint p1, p2;
 		if (arc4random_uniform(2) == 0) {
@@ -268,7 +273,7 @@ static const CGFloat kGoodMeasure = 5.0;
 			p1 = NSMakePoint(x, lowestY);
 			p2 = NSMakePoint(x, highestY);
 		}
-		[layer cutBetweenPoints:p1 and:p2];
+		[GlyphsToolOther cutPathsInLayer:layer forPoint:p1 endPoint:p2];
 	}
 }
 
@@ -276,15 +281,20 @@ static const CGFloat kGoodMeasure = 5.0;
  Translate each path in @p layer by a random vector whose magnitude
  is at most @p maxMove (distributed uniformly per axis up to maxMove/√2
  so the maximum distance equals @p maxMove).
+
+ GSPath has no native -applyTransform: in ObjC; the Python wrapper
+ achieves the same effect by iterating every GSNode and transforming
+ its position.  We do the same here using KVC (Cocoa wraps NSPoint
+ in NSValue automatically).
  */
 - (void)randomMovePaths:(GSLayer *)layer maxMove:(CGFloat)maxMove {
 	CGFloat halfRange = maxMove / sqrt(2.0);
-	for (GSPath *path in layer.paths) {
+	for (id path in layer.paths) {
 		CGFloat dx = [self randomBetween:-halfRange and:halfRange];
 		CGFloat dy = [self randomBetween:-halfRange and:halfRange];
 		NSAffineTransform *t = [NSAffineTransform transform];
 		[t translateXBy:dx yBy:dy];
-		[path applyTransform:[t transformStruct]];
+		[self applyTransform:t toNodesOfPath:path];
 	}
 }
 
@@ -293,17 +303,31 @@ static const CGFloat kGoodMeasure = 5.0;
  degrees around the path's own bounding-box centre.
  */
 - (void)randomRotatePaths:(GSLayer *)layer maxRotate:(CGFloat)maxRotate {
-	for (GSPath *path in layer.paths) {
-		NSRect   b       = path.bounds;
-		CGFloat  cx      = NSMidX(b);
-		CGFloat  cy      = NSMidY(b);
-		CGFloat  degrees = [self randomBetween:-maxRotate and:maxRotate];
+	for (id path in layer.paths) {
+		NSRect  b       = [[path valueForKey:@"bounds"] rectValue];
+		CGFloat cx      = NSMidX(b);
+		CGFloat cy      = NSMidY(b);
+		CGFloat degrees = [self randomBetween:-maxRotate and:maxRotate];
 
 		NSAffineTransform *t = [NSAffineTransform transform];
 		[t translateXBy:cx yBy:cy];
 		[t rotateByDegrees:degrees];
 		[t translateXBy:-cx yBy:-cy];
-		[path applyTransform:[t transformStruct]];
+		[self applyTransform:t toNodesOfPath:path];
+	}
+}
+
+/**
+ Apply @p transform to every node in @p path by reading and writing
+ each node's @c position via KVC.  Cocoa automatically wraps and
+ unwraps NSPoint values as NSValue when accessed through KVC.
+ This mirrors what the Python wrapper's GSPath.applyTransform() does.
+ */
+- (void)applyTransform:(NSAffineTransform *)transform toNodesOfPath:(id)path {
+	for (id node in [path valueForKey:@"nodes"]) {
+		NSPoint pos    = [[node valueForKey:@"position"] pointValue];
+		NSPoint newPos = [transform transformPoint:pos];
+		[node setValue:[NSValue valueWithPoint:newPos] forKey:@"position"];
 	}
 }
 
