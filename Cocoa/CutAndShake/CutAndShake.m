@@ -20,14 +20,9 @@
 #import <GlyphsCore/GSProxyShapes.h>
 #import <objc/message.h>
 
-// Declare selectors that exist in GlyphsCore at runtime but are not in the
-// public headers, so the compiler accepts the call sites below.
+// Declare the selector used via objc_msgSend to suppress -Wundeclared-selector
 @interface NSObject (GlyphsToolOtherCutPaths)
 + (void)cutPathsInLayer:(id)layer forPoint:(NSPoint)p1 endPoint:(NSPoint)p2;
-@end
-
-@interface GSGlyph (LayerAccess)
-- (GSLayer *)layerForId:(NSString *)masterID;
 @end
 
 // NSUserDefaults keys
@@ -231,7 +226,7 @@ static const CGFloat kGoodMeasure = 5.0;
 	}
 
 	// Iterate master layers using the SDK-template pattern (fontMasterAtIndex: +
-	// layerForId:) rather than glyph.layers enumeration, which avoids issues
+	// layerForKey:) rather than glyph.layers enumeration, which avoids issues
 	// with Glyphs' custom ordered-dictionary collection during export.
 	_checkSelection = NO;
 	for (NSUInteger mi = 0; mi < 64; mi++) {
@@ -240,7 +235,7 @@ static const CGFloat kGoodMeasure = 5.0;
 		NSString *masterId = [master valueForKey:@"id"];
 		if (!masterId) continue;
 		for (GSGlyph *glyph in font.glyphs) {
-			GSLayer *layer = [glyph layerForId:masterId];
+			GSLayer *layer = [glyph layerForKey:masterId];
 			if (!layer) continue;
 			[self applyFilterToLayer:layer
 			           numberOfCuts:numberOfCuts
