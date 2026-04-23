@@ -152,6 +152,10 @@
                 <constraint firstItem="RotateField" firstAttribute="top" secondItem="MoveField"   secondAttribute="bottom" constant="10" id="c17"/>
                 <!-- Bottom -->
                 <constraint firstAttribute="bottom"  secondItem="RotateField" secondAttribute="bottom" constant="20" id="c18"/>
+                <!-- Explicit label-column width: fixes Auto Layout ambiguity that caused fields to render at different widths.
+                     44 pt fits "Rotate" at the macOS system font; MoveLabel and RotateLabel inherit the same width
+                     via the trailing-alignment constraints c04/c05 + same leading (c01–c03). -->
+                <constraint firstItem="CutsLabel" firstAttribute="width" constant="44" id="c19"/>
             </constraints>
 
             <point key="canvasLocation" x="153.5" y="199"/>
