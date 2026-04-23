@@ -20,9 +20,14 @@
 #import <GlyphsCore/GSProxyShapes.h>
 #import <objc/message.h>
 
-// Declare the selector used via objc_msgSend to suppress -Wundeclared-selector
+// Declare selectors that exist in GlyphsCore at runtime but are not in the
+// public headers, so the compiler accepts the call sites below.
 @interface NSObject (GlyphsToolOtherCutPaths)
 + (void)cutPathsInLayer:(id)layer forPoint:(NSPoint)p1 endPoint:(NSPoint)p2;
+@end
+
+@interface GSGlyph (LayerAccess)
+- (GSLayer *)layerForKey:(NSString *)masterID;
 @end
 
 // NSUserDefaults keys
