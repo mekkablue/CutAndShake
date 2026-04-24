@@ -113,8 +113,6 @@ static const CGFloat kGoodMeasure = 5.0;
 	_maxMoveField.floatValue      = [ud floatForKey:kMaxMove];
 	_maxRotateField.floatValue    = [ud floatForKey:kMaxRotate];
 
-	[_numberOfCutsField becomeFirstResponder];
-
 	// Trigger an initial preview once the dialog is on screen.
 	// Dispatching asynchronously ensures the edit view is ready to redraw.
 	dispatch_async(dispatch_get_main_queue(), ^{
