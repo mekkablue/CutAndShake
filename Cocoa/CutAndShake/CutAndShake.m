@@ -5,8 +5,8 @@
 //  Rainer Erich Scheichelbauer | mekkablue
 //  Native Cocoa/ObjC version of the CutAndShake Glyphs filter plugin.
 //
-//  Cuts glyphs with random horizontal/vertical lines, then randomly
-//  moves and rotates the resulting path fragments.
+//  Cuts glyphs with random angled lines, then randomly moves and rotates
+//  the resulting path fragments.
 //
 
 #import "CutAndShake.h"
@@ -20,9 +20,14 @@
 #import <GlyphsCore/GSProxyShapes.h>
 #import <objc/message.h>
 
-// Declare the selector used via objc_msgSend to suppress -Wundeclared-selector
+// Declare selectors that exist in GlyphsCore at runtime but are not in the
+// public headers, so the compiler accepts the call sites below.
 @interface NSObject (GlyphsToolOtherCutPaths)
 + (void)cutPathsInLayer:(id)layer forPoint:(NSPoint)p1 endPoint:(NSPoint)p2;
+@end
+
+@interface GSGlyph (LayerAccess)
+- (GSLayer *)layerForId:(NSString *)masterID;
 @end
 
 // NSUserDefaults keys
@@ -225,12 +230,20 @@ static const CGFloat kGoodMeasure = 5.0;
 		if ([key isEqualToString:@"rotate"]) maxRotate    = fabs([value floatValue]);
 	}
 
-	// Iterate all glyphs and their layers.
+	// Iterate master layers using the SDK-template pattern (fontMasterAtIndex: +
+	// layerForId:) rather than glyph.layers enumeration, which avoids issues
+	// with Glyphs' custom ordered-dictionary collection during export.
 	_checkSelection = NO;
-	for (GSGlyph *glyph in font.glyphs) {
-		for (GSLayer *layer in glyph.layers) {
+	for (NSUInteger mi = 0; mi < 64; mi++) {
+		GSFontMaster *master = [font fontMasterAtIndex:mi];
+		if (!master) break;
+		NSString *masterId = [master valueForKey:@"id"];
+		if (!masterId) continue;
+		for (GSGlyph *glyph in font.glyphs) {
+			GSLayer *layer = [glyph layerForId:masterId];
+			if (!layer) continue;
 			[self applyFilterToLayer:layer
-			           numberOfCuts:(NSInteger)numberOfCuts
+			           numberOfCuts:numberOfCuts
 			                maxMove:maxMove
 			              maxRotate:maxRotate];
 		}
@@ -241,7 +254,7 @@ static const CGFloat kGoodMeasure = 5.0;
 
 /**
  Apply the full CutAndShake effect to a single @p layer.
- 1. Make @p numberOfCuts random horizontal or vertical cuts.
+ 1. Make @p numberOfCuts random angled cuts.
  2. Shift each resulting path fragment by a random vector ≤ @p maxMove.
  3. Rotate each path fragment around its own centre by ≤ @p maxRotate degrees.
  */
@@ -256,9 +269,10 @@ static const CGFloat kGoodMeasure = 5.0;
 }
 
 /**
- Make @p numberOfCuts random straight cuts through @p layer.
- Each cut is either horizontal (random Y) or vertical (random X).
- The cut lines extend @c kGoodMeasure beyond the layer bounds so
+ Make @p numberOfCuts random angled cuts through @p layer.
+ Each cut either spans left-to-right or top-to-bottom; both endpoints get
+ independently-random positions, producing diagonal cuts (matching the Python
+ version).  The cut lines extend @c kGoodMeasure beyond the layer bounds so
  they cleanly intersect all paths.
  */
 - (void)randomCutLayer:(GSLayer *)layer numberOfCuts:(NSInteger)numberOfCuts {
@@ -276,15 +290,13 @@ static const CGFloat kGoodMeasure = 5.0;
 	for (NSInteger i = 0; i < numberOfCuts; i++) {
 		NSPoint p1, p2;
 		if (arc4random_uniform(2) == 0) {
-			// Horizontal cut at a random Y
-			CGFloat y = [self randomBetween:lowestY and:highestY];
-			p1 = NSMakePoint(leftmostX,  y);
-			p2 = NSMakePoint(rightmostX, y);
+			// Roughly horizontal cut: spans left-to-right, both Y values independent → angled
+			p1 = NSMakePoint(leftmostX,  [self randomBetween:lowestY and:highestY]);
+			p2 = NSMakePoint(rightmostX, [self randomBetween:lowestY and:highestY]);
 		} else {
-			// Vertical cut at a random X
-			CGFloat x = [self randomBetween:leftmostX and:rightmostX];
-			p1 = NSMakePoint(x, lowestY);
-			p2 = NSMakePoint(x, highestY);
+			// Roughly vertical cut: spans top-to-bottom, both X values independent → angled
+			p1 = NSMakePoint([self randomBetween:leftmostX and:rightmostX], lowestY);
+			p2 = NSMakePoint([self randomBetween:leftmostX and:rightmostX], highestY);
 		}
 		((void (*)(id, SEL, id, NSPoint, NSPoint))objc_msgSend)(
 			(id)GlyphsToolOther,
