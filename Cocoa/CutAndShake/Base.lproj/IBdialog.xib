@@ -136,10 +136,12 @@
                 <!-- Trailing alignment of labels -->
                 <constraint firstItem="MoveLabel"   firstAttribute="trailing" secondItem="CutsLabel"   secondAttribute="trailing" id="c04"/>
                 <constraint firstItem="RotateLabel" firstAttribute="trailing" secondItem="CutsLabel"   secondAttribute="trailing" id="c05"/>
-                <!-- Field leading = label trailing + 8 -->
-                <constraint firstItem="CutsField"   firstAttribute="leading" secondItem="CutsLabel"   secondAttribute="trailing" constant="8" id="c06"/>
-                <constraint firstItem="MoveField"   firstAttribute="leading" secondItem="MoveLabel"   secondAttribute="trailing" constant="8" id="c07"/>
-                <constraint firstItem="RotateField" firstAttribute="leading" secondItem="RotateLabel" secondAttribute="trailing" constant="8" id="c08"/>
+                <!-- Field leading pinned directly to superview (not to label trailing).
+                     This guarantees equal field widths regardless of label intrinsic sizes,
+                     avoiding the HHP-251 issue that caused c04/c05 to be overridden. -->
+                <constraint firstItem="CutsField"   firstAttribute="leading" secondItem="RootView" secondAttribute="leading" constant="128" id="c06"/>
+                <constraint firstItem="MoveField"   firstAttribute="leading" secondItem="RootView" secondAttribute="leading" constant="128" id="c07"/>
+                <constraint firstItem="RotateField" firstAttribute="leading" secondItem="RootView" secondAttribute="leading" constant="128" id="c08"/>
                 <!-- Field trailing = superview trailing - 20 -->
                 <constraint firstAttribute="trailing" secondItem="CutsField"   secondAttribute="trailing" constant="20" id="c09"/>
                 <constraint firstAttribute="trailing" secondItem="MoveField"   secondAttribute="trailing" constant="20" id="c10"/>
