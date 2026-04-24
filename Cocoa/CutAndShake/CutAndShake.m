@@ -27,7 +27,7 @@
 @end
 
 @interface GSGlyph (LayerAccess)
-- (GSLayer *)layerForKey:(NSString *)masterID;
+- (GSLayer *)layerForId:(NSString *)masterID;
 @end
 
 // NSUserDefaults keys
@@ -231,7 +231,7 @@ static const CGFloat kGoodMeasure = 5.0;
 	}
 
 	// Iterate master layers using the SDK-template pattern (fontMasterAtIndex: +
-	// layerForKey:) rather than glyph.layers enumeration, which avoids issues
+	// layerForId:) rather than glyph.layers enumeration, which avoids issues
 	// with Glyphs' custom ordered-dictionary collection during export.
 	_checkSelection = NO;
 	for (NSUInteger mi = 0; mi < 64; mi++) {
@@ -240,7 +240,7 @@ static const CGFloat kGoodMeasure = 5.0;
 		NSString *masterId = [master valueForKey:@"id"];
 		if (!masterId) continue;
 		for (GSGlyph *glyph in font.glyphs) {
-			GSLayer *layer = [glyph layerForKey:masterId];
+			GSLayer *layer = [glyph layerForId:masterId];
 			if (!layer) continue;
 			[self applyFilterToLayer:layer
 			           numberOfCuts:numberOfCuts
