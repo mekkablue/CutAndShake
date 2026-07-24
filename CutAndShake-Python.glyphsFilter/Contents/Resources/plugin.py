@@ -16,8 +16,10 @@ from __future__ import division, print_function, unicode_literals
 ###########################################################################################################
 
 import objc
-from GlyphsApp import *
-from GlyphsApp.plugins import *
+from GlyphsApp import Glyphs
+from GlyphsApp.plugins import FilterWithDialog
+from Foundation import NSUserDefaults, NSPoint
+from AppKit import NSAffineTransform
 from random import random, randint
 
 class CutAndShake(FilterWithDialog):
