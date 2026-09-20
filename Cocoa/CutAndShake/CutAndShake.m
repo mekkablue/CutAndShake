@@ -298,7 +298,9 @@ static Class CutPathsToolClass(void) {
  */
 - (void)randomCutLayer:(GSLayer *)layer numberOfCuts:(NSInteger)numberOfCuts {
 	Class knifeTool = CutPathsToolClass();
-	if (!knifeTool || layer.paths.count == 0) return;
+	// layer.paths is a GSProxyShapes, which has no -count; ask the
+	// underlying shapes array instead.
+	if (!knifeTool || layer.shapes.count == 0) return;
 
 	NSRect b = layer.bounds;
 	CGFloat lowestY    = NSMinY(b) - kGoodMeasure;

@@ -284,16 +284,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks\"",
-				);
 				GLYPHS_APP_PATH = "/Applications/Glyphs 4.app";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers\"",
-					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsApp.framework/Headers\"",
-				);
 				INFOPLIST_FILE = CutAndShake/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application Support/Glyphs 4/Plugins";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -308,6 +299,15 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mekkablue.CutAndShake;
 				PRODUCT_NAME = CutAndShake;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks\"",
+				);
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers\"",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsApp.framework/Headers\"",
+				);
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = glyphsFilter;
 			};
@@ -318,16 +318,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks\"",
-				);
 				GLYPHS_APP_PATH = "/Applications/Glyphs 4.app";
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers\"",
-					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsApp.framework/Headers\"",
-				);
 				INFOPLIST_FILE = CutAndShake/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Application Support/Glyphs 4/Plugins";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -342,6 +333,15 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.mekkablue.CutAndShake;
 				PRODUCT_NAME = CutAndShake;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks\"",
+				);
+				SYSTEM_HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsCore.framework/Headers\"",
+					"\"$(GLYPHS_APP_PATH)/Contents/Frameworks/GlyphsApp.framework/Headers\"",
+				);
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = glyphsFilter;
 			};
