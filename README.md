@@ -25,7 +25,12 @@ If you do not feel like typing it, you can click the *Copy Parameter* button, wh
 
 ### Requirements
 
-The plugin needs Glyphs 2.3 or higher. I assume it will not work in earlier versions.
+The plugin needs Glyphs 4. It ships in two flavours, both of which install the same *Filter > Cut and Shake* menu item and use the same bundle identifier, so install only one of them:
+
+* `CutAndShake.glyphsFilter` — the native Cocoa/Objective-C build (source in `Cocoa/`).
+* `CutAndShake-Python.glyphsFilter` — the Python version.
+
+For Glyphs 3, use [version 3.0](https://github.com/mekkablue/CutAndShake/releases) (Cocoa) or 2.0.6 (Python).
 
 ### License
 

@@ -7,7 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <GlyphsCore/GSFilterPlugin.h>
+// In Glyphs 4, GSFilterPlugin lives in the GlyphsApp framework.
+// (In Glyphs 3 it used to be <GlyphsCore/GSFilterPlugin.h>.)
+#import <GlyphsApp/GSFilterPlugin.h>
 
 @interface CutAndShake : GSFilterPlugin
 

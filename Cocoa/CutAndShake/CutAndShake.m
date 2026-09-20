@@ -10,24 +10,22 @@
 //
 
 #import "CutAndShake.h"
-#import <GlyphsCore/GSFont.h>
-#import <GlyphsCore/GSFontMaster.h>
-#import <GlyphsCore/GSGlyph.h>
-#import <GlyphsCore/GSLayer.h>
-#import <GlyphsCore/GSPath.h>
-#import <GlyphsCore/GSNode.h>
-#import <GlyphsCore/GSCallbackHandler.h>
-#import <GlyphsCore/GSProxyShapes.h>
-#import <objc/message.h>
+#import <GlyphsCore/GlyphsCore.h>
+#import <GlyphsApp/GSCallbackHandler.h>
 
-// Declare selectors that exist in GlyphsCore at runtime but are not in the
-// public headers, so the compiler accepts the call sites below.
-@interface NSObject (GlyphsToolOtherCutPaths)
-+ (void)cutPathsInLayer:(id)layer forPoint:(NSPoint)p1 endPoint:(NSPoint)p2;
+// +cutPathsInLayer:forPoint:endPoint: is what GSLayer.cutBetweenPoints() calls
+// in the Python wrapper. The class holding it is looked up at runtime, so the
+// selector is declared here to give the compiler a signature to work with.
+@interface NSObject (GlyphsCutPathsInLayer)
++ (void)cutPathsInLayer:(GSLayer *)layer forPoint:(NSPoint)point endPoint:(NSPoint)endPoint;
 @end
 
-@interface GSGlyph (LayerAccess)
-- (GSLayer *)layerForId:(NSString *)masterID;
+@interface CutAndShake ()
++ (void)registerUserDefaults;
+- (void)applyFilterToLayer:(GSLayer *)layer
+              numberOfCuts:(NSInteger)numberOfCuts
+                   maxMove:(CGFloat)maxMove
+                 maxRotate:(CGFloat)maxRotate;
 @end
 
 // NSUserDefaults keys
@@ -38,11 +36,43 @@ static NSString *const kMaxRotate    = @"com.mekkablue.CutAndShake.maxRotate";
 // Extra margin around the glyph bounds when generating cut lines
 static const CGFloat kGoodMeasure = 5.0;
 
-@implementation CutAndShake
+/**
+ The tool class that performs the cutting.
+ Glyphs 4 calls it GlyphsToolKnife, Glyphs 3 called it GlyphsToolOther.
+ */
+static Class CutPathsToolClass(void) {
+	static Class toolClass = Nil;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
+		toolClass = NSClassFromString(@"GlyphsToolKnife");
+		if (!toolClass) {
+			toolClass = NSClassFromString(@"GlyphsToolOther");
+		}
+	});
+	return toolClass;
+}
+
+@implementation CutAndShake {
+	// Glyphs 4 no longer provides a _view ivar in GSFilterPlugin, so the
+	// plugin brings its own. Without it the bundle fails to load in Glyphs 4
+	// with a missing _OBJC_IVAR_$_GSFilterPlugin._view symbol.
+	NSView *_view;
+}
 
 - (instancetype)init {
 	self = [super init];
+	if (self) {
+		[[self class] registerUserDefaults];
+	}
 	return self;
+}
+
++ (void)registerUserDefaults {
+	[[NSUserDefaults standardUserDefaults] registerDefaults:@{
+		kNumberOfCuts: @5,
+		kMaxMove:      @50,
+		kMaxRotate:    @20,
+	}];
 }
 
 #pragma mark - GSFilterPlugin required methods
@@ -100,24 +130,15 @@ static const CGFloat kGoodMeasure = 5.0;
 	// Called just before the dialog is shown.  Restore saved values and
 	// push them into the text fields.
 	[super setup];
-
-	NSDictionary *defaults = @{
-		kNumberOfCuts: @5,
-		kMaxMove:      @50,
-		kMaxRotate:    @20,
-	};
-	[[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+	[[self class] registerUserDefaults];
 
 	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-	_numberOfCutsField.intValue   = (int)[ud integerForKey:kNumberOfCuts];
-	_maxMoveField.floatValue      = [ud floatForKey:kMaxMove];
-	_maxRotateField.floatValue    = [ud floatForKey:kMaxRotate];
+	_numberOfCutsField.integerValue = [ud integerForKey:kNumberOfCuts];
+	_maxMoveField.doubleValue       = [ud doubleForKey:kMaxMove];
+	_maxRotateField.doubleValue     = [ud doubleForKey:kMaxRotate];
 
-	// Trigger an initial preview once the dialog is on screen.
-	// Dispatching asynchronously ensures the edit view is ready to redraw.
-	dispatch_async(dispatch_get_main_queue(), ^{
-		[self process:nil];
-	});
+	// Show an initial preview right away.
+	[self process:nil];
 	return nil;
 }
 
@@ -125,21 +146,21 @@ static const CGFloat kGoodMeasure = 5.0;
 
 - (IBAction)setNumberOfCuts:(id)sender {
 	[[NSUserDefaults standardUserDefaults]
-		setInteger:[(NSTextField *)sender intValue]
+		setInteger:[(NSTextField *)sender integerValue]
 		forKey:kNumberOfCuts];
 	[self process:nil];
 }
 
 - (IBAction)setMaxMove:(id)sender {
 	[[NSUserDefaults standardUserDefaults]
-		setFloat:[(NSTextField *)sender floatValue]
+		setDouble:[(NSTextField *)sender doubleValue]
 		forKey:kMaxMove];
 	[self process:nil];
 }
 
 - (IBAction)setMaxRotate:(id)sender {
 	[[NSUserDefaults standardUserDefaults]
-		setFloat:[(NSTextField *)sender floatValue]
+		setDouble:[(NSTextField *)sender doubleValue]
 		forKey:kMaxRotate];
 	[self process:nil];
 }
@@ -156,8 +177,8 @@ static const CGFloat kGoodMeasure = 5.0;
 - (void)process:(id)sender {
 	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 	NSInteger numberOfCuts = [ud integerForKey:kNumberOfCuts];
-	CGFloat   maxMove      = [ud floatForKey:kMaxMove];
-	CGFloat   maxRotate    = [ud floatForKey:kMaxRotate];
+	CGFloat   maxMove      = [ud doubleForKey:kMaxMove];
+	CGFloat   maxRotate    = [ud doubleForKey:kMaxRotate];
 
 	for (NSUInteger k = 0; k < _shadowLayers.count; k++) {
 		GSLayer *shadowLayer = _shadowLayers[k];
@@ -184,9 +205,9 @@ static const CGFloat kGoodMeasure = 5.0;
 		}
 
 		[self applyFilterToLayer:layer
-		           numberOfCuts:numberOfCuts
-		                maxMove:maxMove
-		              maxRotate:maxRotate];
+		            numberOfCuts:numberOfCuts
+		                 maxMove:maxMove
+		               maxRotate:maxRotate];
 		[layer clearSelection];
 	}
 	[super process:nil];
@@ -199,8 +220,8 @@ static const CGFloat kGoodMeasure = 5.0;
 	return [NSString stringWithFormat:@"%@; cuts:%ld; move:%.1f; rotate:%.1f",
 		NSStringFromClass([self class]),
 		(long)[ud integerForKey:kNumberOfCuts],
-		[ud floatForKey:kMaxMove],
-		[ud floatForKey:kMaxRotate]];
+		[ud doubleForKey:kMaxMove],
+		[ud doubleForKey:kMaxRotate]];
 }
 
 #pragma mark - Export / batch processing
@@ -208,43 +229,45 @@ static const CGFloat kGoodMeasure = 5.0;
 - (void)processFont:(GSFont *)font withArguments:(NSArray *)arguments {
 	// Called when the filter is invoked as a Custom Parameter at export.
 	// arguments[0] is the class name; the remaining items are key:value pairs.
+	[[self class] registerUserDefaults];
 
-	NSInteger numberOfCuts = [[NSUserDefaults standardUserDefaults] integerForKey:kNumberOfCuts];
-	CGFloat   maxMove      = [[NSUserDefaults standardUserDefaults] floatForKey:kMaxMove];
-	CGFloat   maxRotate    = [[NSUserDefaults standardUserDefaults] floatForKey:kMaxRotate];
+	NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+	NSInteger numberOfCuts = [ud integerForKey:kNumberOfCuts];
+	CGFloat   maxMove      = [ud doubleForKey:kMaxMove];
+	CGFloat   maxRotate    = [ud doubleForKey:kMaxRotate];
 
 	// Parse key:value arguments supplied via the custom parameter.
+	NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
 	for (NSUInteger i = 1; i < arguments.count; i++) {
-		NSString *arg = [arguments[i] stringByTrimmingCharactersInSet:
-		                 [NSCharacterSet whitespaceCharacterSet]];
+		NSString *arg = [arguments[i] stringByTrimmingCharactersInSet:whitespace];
+		if ([arg hasPrefix:@"include:"] || [arg hasPrefix:@"exclude:"]) continue;
 		NSArray  *kv  = [arg componentsSeparatedByString:@":"];
 		if (kv.count != 2) continue;
-		NSString *key   = [kv[0] stringByTrimmingCharactersInSet:
-		                   [NSCharacterSet whitespaceCharacterSet]];
-		NSString *value = [kv[1] stringByTrimmingCharactersInSet:
-		                   [NSCharacterSet whitespaceCharacterSet]];
+		NSString *key   = [kv[0] stringByTrimmingCharactersInSet:whitespace];
+		NSString *value = [kv[1] stringByTrimmingCharactersInSet:whitespace];
 		if ([key isEqualToString:@"cuts"])   numberOfCuts = [value integerValue];
-		if ([key isEqualToString:@"move"])   maxMove      = fabs([value floatValue]);
-		if ([key isEqualToString:@"rotate"]) maxRotate    = fabs([value floatValue]);
+		if ([key isEqualToString:@"move"])   maxMove      = fabs([value doubleValue]);
+		if ([key isEqualToString:@"rotate"]) maxRotate    = fabs([value doubleValue]);
 	}
 
-	// Iterate master layers using the SDK-template pattern (fontMasterAtIndex: +
-	// layerForId:) rather than glyph.layers enumeration, which avoids issues
-	// with Glyphs' custom ordered-dictionary collection during export.
+	// Process the first master of the (already interpolated) instance font,
+	// honouring any include:/exclude: glyph list, as in the SDK template.
 	_checkSelection = NO;
-	for (NSUInteger mi = 0; mi < 64; mi++) {
-		GSFontMaster *master = [font fontMasterAtIndex:mi];
-		if (!master) break;
-		NSString *masterId = [master valueForKey:@"id"];
-		if (!masterId) continue;
-		for (GSGlyph *glyph in font.glyphs) {
-			GSLayer *layer = [glyph layerForId:masterId];
-			if (!layer) continue;
-			[self applyFilterToLayer:layer
-			           numberOfCuts:numberOfCuts
-			                maxMove:maxMove
-			              maxRotate:maxRotate];
+	NSString *fontMasterId = [font fontMasterAtIndex:0].id;
+	if (!fontMasterId) return;
+	BOOL include = NO;
+	NSError *error = nil;
+	NSSet *glyphNames = getIncludeExcludeGlyphListFilter(arguments, &include, font, &error);
+	for (GSGlyph *glyph in font.glyphs) {
+		if (glyphNames && [glyphNames containsObject:glyph.name] != include) {
+			continue;
 		}
+		GSLayer *layer = [glyph layerForId:fontMasterId];
+		if (!layer) continue;
+		[self applyFilterToLayer:layer
+		            numberOfCuts:numberOfCuts
+		                 maxMove:maxMove
+		               maxRotate:maxRotate];
 	}
 }
 
@@ -257,9 +280,9 @@ static const CGFloat kGoodMeasure = 5.0;
  3. Rotate each path fragment around its own centre by ≤ @p maxRotate degrees.
  */
 - (void)applyFilterToLayer:(GSLayer *)layer
-             numberOfCuts:(NSInteger)numberOfCuts
-                  maxMove:(CGFloat)maxMove
-                maxRotate:(CGFloat)maxRotate {
+              numberOfCuts:(NSInteger)numberOfCuts
+                   maxMove:(CGFloat)maxMove
+                 maxRotate:(CGFloat)maxRotate {
 
 	[self randomCutLayer:layer numberOfCuts:numberOfCuts];
 	[self randomMovePaths:layer    maxMove:maxMove];
@@ -274,16 +297,14 @@ static const CGFloat kGoodMeasure = 5.0;
  they cleanly intersect all paths.
  */
 - (void)randomCutLayer:(GSLayer *)layer numberOfCuts:(NSInteger)numberOfCuts {
+	Class knifeTool = CutPathsToolClass();
+	if (!knifeTool || layer.paths.count == 0) return;
+
 	NSRect b = layer.bounds;
 	CGFloat lowestY    = NSMinY(b) - kGoodMeasure;
 	CGFloat highestY   = NSMaxY(b) + kGoodMeasure;
 	CGFloat leftmostX  = NSMinX(b) - kGoodMeasure;
 	CGFloat rightmostX = NSMaxX(b) + kGoodMeasure;
-
-	// layer.cutBetweenPoints() in the Python API is a wrapper around
-	// +[GlyphsToolOther cutPathsInLayer:forPoint:endPoint:].
-	// We look up the class at runtime so we don't need its header.
-	Class GlyphsToolOther = NSClassFromString(@"GlyphsToolOther");
 
 	for (NSInteger i = 0; i < numberOfCuts; i++) {
 		NSPoint p1, p2;
@@ -296,10 +317,7 @@ static const CGFloat kGoodMeasure = 5.0;
 			p1 = NSMakePoint([self randomBetween:leftmostX and:rightmostX], lowestY);
 			p2 = NSMakePoint([self randomBetween:leftmostX and:rightmostX], highestY);
 		}
-		((void (*)(id, SEL, id, NSPoint, NSPoint))objc_msgSend)(
-			(id)GlyphsToolOther,
-			@selector(cutPathsInLayer:forPoint:endPoint:),
-			layer, p1, p2);
+		[knifeTool cutPathsInLayer:layer forPoint:p1 endPoint:p2];
 	}
 }
 
@@ -307,15 +325,10 @@ static const CGFloat kGoodMeasure = 5.0;
  Translate each path in @p layer by a random vector whose magnitude
  is at most @p maxMove (distributed uniformly per axis up to maxMove/√2
  so the maximum distance equals @p maxMove).
-
- GSPath has no native -applyTransform: in ObjC; the Python wrapper
- achieves the same effect by iterating every GSNode and transforming
- its position.  We do the same here using KVC (Cocoa wraps NSPoint
- in NSValue automatically).
  */
 - (void)randomMovePaths:(GSLayer *)layer maxMove:(CGFloat)maxMove {
 	CGFloat halfRange = maxMove / sqrt(2.0);
-	for (id path in layer.paths) {
+	for (GSPath *path in layer.paths) {
 		CGFloat dx = [self randomBetween:-halfRange and:halfRange];
 		CGFloat dy = [self randomBetween:-halfRange and:halfRange];
 		NSAffineTransform *t = [NSAffineTransform transform];
@@ -329,8 +342,8 @@ static const CGFloat kGoodMeasure = 5.0;
  degrees around the path's own bounding-box centre.
  */
 - (void)randomRotatePaths:(GSLayer *)layer maxRotate:(CGFloat)maxRotate {
-	for (id path in layer.paths) {
-		NSRect  b       = [[path valueForKey:@"bounds"] rectValue];
+	for (GSPath *path in layer.paths) {
+		NSRect  b       = path.bounds;
 		CGFloat cx      = NSMidX(b);
 		CGFloat cy      = NSMidY(b);
 		CGFloat degrees = [self randomBetween:-maxRotate and:maxRotate];
@@ -344,16 +357,12 @@ static const CGFloat kGoodMeasure = 5.0;
 }
 
 /**
- Apply @p transform to every node in @p path by reading and writing
- each node's @c position via KVC.  Cocoa automatically wraps and
- unwraps NSPoint values as NSValue when accessed through KVC.
+ Apply @p transform to every node in @p path.
  This mirrors what the Python wrapper's GSPath.applyTransform() does.
  */
-- (void)applyTransform:(NSAffineTransform *)transform toNodesOfPath:(id)path {
-	for (id node in [path valueForKey:@"nodes"]) {
-		NSPoint pos    = [[node valueForKey:@"position"] pointValue];
-		NSPoint newPos = [transform transformPoint:pos];
-		[node setValue:[NSValue valueWithPoint:newPos] forKey:@"position"];
+- (void)applyTransform:(NSAffineTransform *)transform toNodesOfPath:(GSPath *)path {
+	for (GSNode *node in path.nodes) {
+		node.position = [transform transformPoint:node.position];
 	}
 }
 

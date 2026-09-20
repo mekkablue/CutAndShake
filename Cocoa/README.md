@@ -33,7 +33,13 @@ Cocoa/
 |-------------|---------|
 | macOS       | 12 Monterey or later |
 | Xcode       | 15 or later |
-| Glyphs      | 3.x |
+| Glyphs      | 4.x |
+
+`GSFilterPlugin` moved from the `GlyphsCore` framework to `GlyphsApp`
+in Glyphs 4, and `GSFilterPlugin` no longer carries a `_view` ivar, so
+the plugin declares its own. A build made against Glyphs 3 headers will
+not load in Glyphs 4: dyld rejects the bundle over the missing
+`_OBJC_IVAR_$_GSFilterPlugin._view` symbol.
 
 ## Building
 
@@ -42,20 +48,22 @@ Cocoa/
 3. Make sure `GLYPHS_APP_PATH` resolves correctly.
    The project uses `$(GLYPHS_APP_PATH)/Contents/Frameworks` for
    both the framework and header search paths.
-   If Glyphs 3 is installed in a non-standard location, copy
+   If Glyphs 4 is installed in a non-standard location, copy
    `LocalConfig.xcconfig` into place and set the path there, then
    add the xcconfig to the project's build configuration.
-4. Build (⌘B).  The product is placed in the standard Derived Data
-   folder as `CutAndShake.glyphsFilter`.
+4. Build the *Release* configuration (⌘B). It builds
+   `$(ARCHS_STANDARD)` with `ONLY_ACTIVE_ARCH = NO`, so the product is
+   universal (arm64 + x86_64). The product is placed in the standard
+   Derived Data folder as `CutAndShake.glyphsFilter`.
 5. Copy the bundle to
-   `~/Library/Application Support/Glyphs 3/Plugins/`
+   `~/Library/Application Support/Glyphs 4/Plugins/`
    and restart Glyphs.
 
 ## How it works
 
 | Step | Code |
 |------|------|
-| **Cut** | `randomCutLayer:numberOfCuts:` makes *N* random horizontal **or** vertical straight cuts through the layer using `[GSLayer cutBetweenPoints:and:]`. |
+| **Cut** | `randomCutLayer:numberOfCuts:` makes *N* random horizontal **or** vertical straight cuts through the layer using `+[GlyphsToolKnife cutPathsInLayer:forPoint:endPoint:]` (Glyphs 3 called that class `GlyphsToolOther`; both are looked up at runtime). |
 | **Move** | `randomMovePaths:maxMove:` translates each resulting path fragment by a random (dx, dy) whose magnitude ≤ *maxMove* units. |
 | **Rotate** | `randomRotatePaths:maxRotate:` rotates each path fragment around its own bounding-box centre by a random angle ≤ *maxRotate* degrees. |
 
@@ -68,6 +76,11 @@ CutAndShake; cuts:5; move:50; rotate:20
 
 ## Linking note
 
-The plugin uses `-undefined dynamic_lookup` so that `GlyphsCore`
-symbols are resolved at runtime from the hosting Glyphs process.
-**Do not embed** `GlyphsCore.framework` in the plugin bundle.
+The plugin uses `-undefined dynamic_lookup` so that `GlyphsCore` and
+`GlyphsApp` symbols are resolved at runtime from the hosting Glyphs
+process. **Do not embed** either framework in the plugin bundle.
+
+Because the symbols are resolved at load time, a single missing one —
+a class, or an ivar of a superclass — makes Glyphs drop the plugin
+silently. `llvm-nm -u CutAndShake.glyphsFilter/Contents/MacOS/CutAndShake`
+lists what the bundle expects the host to provide.
